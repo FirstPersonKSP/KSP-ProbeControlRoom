@@ -41,17 +41,21 @@ namespace ProbeControlRoom
 
 			private static string lastMessage = "";
 
-
+			[System.Diagnostics.Conditional("DEBUG")] 
 			public static void debug(String str)
 			{
 				if(modes.DEBUG.Equals(mode))
 					logMessage ("DEBUG: " + str);
 			}
+
+			[System.Diagnostics.Conditional("DEBUG")] 
 			public static void message(String str)
 			{
 				if(modes.DEBUG.Equals(mode) || modes.TESTING.Equals(mode) )
 					logMessage ("INFO: " + str);
 			}
+
+			[System.Diagnostics.Conditional("DEBUG")] 
 			public static void error(String str)
 			{
 				if(modes.DEBUG.Equals(mode) || modes.TESTING.Equals(mode) || modes.RELEASE.Equals(mode))

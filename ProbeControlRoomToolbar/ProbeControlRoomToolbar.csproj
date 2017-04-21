@@ -3,12 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F85B9451-74D5-4C48-8647-76A779ADD3FF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>ProbeControlRoomToolbar</RootNamespace>
     <AssemblyName>ProbeControlRoomToolbar</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProbeControlRoom\ProbeControlRoom.csproj">
-      <Project>{6bb6bf04-c58f-47ee-a4bb-3cada7850606}</Project>
+      <Project>{6BB6BF04-C58F-47EE-A4BB-3CADA7850606}</Project>
       <Name>ProbeControlRoom</Name>
     </ProjectReference>
   </ItemGroup>
