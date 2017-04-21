@@ -651,21 +651,40 @@ namespace ProbeControlRoom
 
             // If our current vessel still has the old PCR part, keep it active
 			if (aPart != null && vessel.parts.Contains (aPart)) {
-				canPCRIVA = true;
-				ProbeControlRoomUtils.Logger.debug ("refreshVesselRooms() - Old part still there, cleaning up extra rooms and returning");
-				//Our old part is still there and active. Clean up extras as needed and return
-				for (int i = 0; i < vessel.parts.Count; i++) {
-					Part p = vessel.parts [i];
-					if (p.GetComponent<ProbeControlRoomPart> () != null && aPart != p && p.protoModuleCrew.Count == 0 && p.internalModel != null) {
-						ProbeControlRoomUtils.Logger.debug ("refreshRooms() Found and destroying old PCR in " + p.ToString ());
-						p.internalModel.gameObject.DestroyGameObject ();
-						p.internalModel = null;
+
+				// If stock IVA is available then we can't have our model around, it might
+				// interfere with stock IVA clicks.
+				if (canStockIVA) {
+					ProbeControlRoomUtils.Logger.debug ("refreshVesselRooms() - Destroying existing PCR part due to stock IVA.");
+					canPCRIVA = false;
+					if (aPart.internalModel != null) {
+						aPart.internalModel.gameObject.DestroyGameObject ();
+						aPart.internalModel = null;
+					}
+					aPart = null;
+				} else {
+					canPCRIVA = true;
+					ProbeControlRoomUtils.Logger.debug ("refreshVesselRooms() - Old part still there, cleaning up extra rooms and returning");
+					//Our old part is still there and active. Clean up extras as needed and return
+					for (int i = 0; i < vessel.parts.Count; i++) {
+						Part p = vessel.parts [i];
+						if (p.GetComponent<ProbeControlRoomPart> () != null && aPart != p && p.protoModuleCrew.Count == 0 && p.internalModel != null) {
+							ProbeControlRoomUtils.Logger.debug ("refreshRooms() Found and destroying old PCR in " + p.ToString ());
+							p.internalModel.gameObject.DestroyGameObject ();
+							p.internalModel = null;
+						}
 					}
 				}
 				return;
 			} else {
 				aPart = null;
 				ProbeControlRoomUtils.Logger.debug ("refreshVesselRooms() - Old part no longer in vessel.");
+			}
+
+			//Do not create PCR when stock IVA available.
+			if (canStockIVA) {
+				canPCRIVA = false;
+				return;
 			}
 
             //No current active PCR found, time to create a new one
