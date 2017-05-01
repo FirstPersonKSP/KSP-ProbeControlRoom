@@ -104,11 +104,13 @@ namespace ProbeControlRoom
 
             //Register game events
             GameEvents.onVesselWasModified.Fire(FlightGlobals.ActiveVessel);
+
             GameEvents.onVesselChange.Add(OnVesselChange);
             GameEvents.onVesselWasModified.Add(OnVesselModified);
             GameEvents.onGUIApplicationLauncherReady.Add(onGUIApplicationLauncherReady);
 			GameEvents.OnMapExited.Add(onMapExited);
 			GameEvents.OnCameraChange.Add(onCameraChange);
+			GameEvents.onGameSceneSwitchRequested.Add(OnGameSceneSwitchRequested);
 
             //If Manely mode is set true, force straight into IVA
             if (ProbeControlRoomSettings.Instance.ForcePCROnly)
@@ -117,6 +119,12 @@ namespace ProbeControlRoom
                 startIVA();
             }
         }
+
+		void OnGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> scn)
+		{
+			if (isActive)
+				stopIVA ();
+		}
 
         /// <summary>
         /// Setup app launcher button when the GUI is ready
@@ -263,9 +271,13 @@ namespace ProbeControlRoom
 			}
 
             ProbeControlRoomUtils.Logger.debug("OnDestroy()");
-            GameEvents.onVesselChange.Remove(OnVesselChange);
-            GameEvents.onVesselWasModified.Remove(OnVesselModified);
+
+			GameEvents.onVesselChange.Remove(OnVesselChange);
+			GameEvents.onVesselWasModified.Remove(OnVesselModified);
+			GameEvents.onGUIApplicationLauncherReady.Remove(onGUIApplicationLauncherReady);
 			GameEvents.OnMapExited.Remove(onMapExited);
+			GameEvents.OnCameraChange.Remove(onCameraChange);
+			GameEvents.onGameSceneSwitchRequested.Remove(OnGameSceneSwitchRequested);
 
             if (appLauncherButton != null)
             {
@@ -653,7 +665,7 @@ namespace ProbeControlRoom
 						}
 
 						//Check for imput to stop IVA
-						if (!MapView.MapIsEnabled && Input.GetKeyDown (GameSettings.CAMERA_MODE.primary)) {
+						if (!MapView.MapIsEnabled && GameSettings.CAMERA_MODE.GetKeyDown(false)) {
 							ProbeControlRoomUtils.Logger.message ("OnUpdate() - CAMERA_MODE.key seen, stopIVA()");
 							if (ProbeControlRoomSettings.Instance.ForcePCROnly) {
 								ProbeControlRoomUtils.Logger.message ("OnUpdate() - CAMERA_MODE.key seen, stopIVA() KILLED - ForcePCROnly Enabled.");
@@ -671,7 +683,7 @@ namespace ProbeControlRoom
                 {
                     // Listen for keyboard input to start PCR unless a valid IVA exists.  PCR can still be started via AppLauncher or toolbar
 					if (!maybecanstockiva && !canStockIVA && canPCRIVA && !MapView.MapIsEnabled && 
-						(ProbeControlRoomSettings.Instance.ForcePCROnly || Input.GetKeyDown (GameSettings.CAMERA_MODE.primary) )
+						(ProbeControlRoomSettings.Instance.ForcePCROnly || GameSettings.CAMERA_MODE.GetKeyDown(false) )
 						) {
 						ProbeControlRoomUtils.Logger.message ("OnUpdate() - CAMERA_MODE.key seen, startIVA()");
 						startIVA ();
