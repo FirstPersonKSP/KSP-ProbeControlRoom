@@ -58,10 +58,7 @@ Thanks
 	
 Authors
 -------
-	Current Maintainer: IceDown
-	Original Author: Christian 'Tabakhase' Hackmann	(mail <at> tabakhase.com) - PluginCode
-	'Albert VDS' - 3D & Textures of MissionControl
-	And various community members.
+	Contributions by: Virindi, Tabakhase, Icedown, Albert_VDS, MeCripp, Nils277, JPLRepo, Dexter9313, Z-Key Aerospace, JlCarneiro
 	
 	
 License
