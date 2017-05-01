@@ -27,9 +27,11 @@ namespace ProbeControlRoom
 		//Stuff to mess with
 		private static System.Reflection.FieldInfo field_internalcamera_currentPitch = null;
 		private static System.Reflection.FieldInfo field_internalcamera_currentRot = null;
+		private static System.Reflection.FieldInfo field_internalcamera_currentZoom = null;
 		bool hassavedlookangles = false;
 		float savedpitch = 0f;
 		float savedrot = 0f;
+		float savedzoom = 0f;
         
         //Vessel has IVA with crew onboard
         private bool canStockIVA;
@@ -80,6 +82,8 @@ namespace ProbeControlRoom
 				field_internalcamera_currentPitch = typeof(InternalCamera).GetField ("currentPitch", System.Reflection.BindingFlags.GetField | System.Reflection.BindingFlags.SetField | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
 			if (field_internalcamera_currentRot == null)
 				field_internalcamera_currentRot = typeof(InternalCamera).GetField ("currentRot", System.Reflection.BindingFlags.GetField | System.Reflection.BindingFlags.SetField | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+			if (field_internalcamera_currentZoom == null)
+				field_internalcamera_currentZoom = typeof(InternalCamera).GetField ("currentZoom", System.Reflection.BindingFlags.GetField | System.Reflection.BindingFlags.SetField | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
 
 			if (method_vessellabels_enablealllabels == null)
 				method_vessellabels_enablealllabels = typeof(VesselLabels).GetMethod ("EnableAllLabels", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Instance);
@@ -491,12 +495,14 @@ namespace ProbeControlRoom
 				appLauncherButton.SetTexture (IconDeactivate);
 			}
 
-			if (hassavedlookangles && field_internalcamera_currentPitch != null && field_internalcamera_currentRot != null) {
+			if (hassavedlookangles && field_internalcamera_currentPitch != null && field_internalcamera_currentRot != null && field_internalcamera_currentZoom != null) {
+				ProbeControlRoomUtils.Logger.debug(string.Format("startIVA() - Restoring pitch and rot. {0}, {1}", savedpitch, savedrot));
+
 				field_internalcamera_currentPitch.SetValue (InternalCamera.Instance, savedpitch);
 				field_internalcamera_currentRot.SetValue (InternalCamera.Instance, savedrot);
+				field_internalcamera_currentZoom.SetValue (InternalCamera.Instance, savedzoom);
 				InternalCamera.Instance.Update ();
 			}
-			hassavedlookangles = false;
 
 			//Disable sun effects inside of IVA
 			SetSun(false);
@@ -522,25 +528,16 @@ namespace ProbeControlRoom
 			{
 				ProbeControlRoomUtils.Logger.message("ResetCameraToIVA(Part) - Seat: " + aModule.seatTransformName.ToString());
 			}
-
-			//Preserve the old camera rotation settings.
-			float oldpitch = 0f;
-			float oldrot = 0f;
-			if (field_internalcamera_currentPitch != null && field_internalcamera_currentRot != null) {
-				ProbeControlRoomUtils.Logger.message("Preserving pitch and rot.");
-				oldpitch = (float)field_internalcamera_currentPitch.GetValue (InternalCamera.Instance);
-				oldrot = (float)field_internalcamera_currentRot.GetValue (InternalCamera.Instance);
-			} else {
-				ProbeControlRoomUtils.Logger.error("NOT Preserving pitch and rot because fields are missing!");
-			}
-
+				
 
 			CameraManager.Instance.SetCameraInternal(aPart.internalModel, actualTransform);
 
 
-			if (field_internalcamera_currentPitch != null && field_internalcamera_currentRot != null) {
-				field_internalcamera_currentPitch.SetValue (InternalCamera.Instance, oldpitch);
-				field_internalcamera_currentRot.SetValue (InternalCamera.Instance, oldrot);
+			//Restore PCRIVA camera
+			if (hassavedlookangles && field_internalcamera_currentPitch != null && field_internalcamera_currentRot != null && field_internalcamera_currentZoom != null) {
+				field_internalcamera_currentPitch.SetValue (InternalCamera.Instance, savedpitch);
+				field_internalcamera_currentRot.SetValue (InternalCamera.Instance, savedrot);
+				field_internalcamera_currentZoom.SetValue (InternalCamera.Instance, savedzoom);
 				InternalCamera.Instance.Update ();
 			}
 
@@ -560,15 +557,6 @@ namespace ProbeControlRoom
 
 			//Enable sun effects inside of IVA
 			SetSun(true);
-
-			if (field_internalcamera_currentPitch != null && field_internalcamera_currentRot != null) {
-				ProbeControlRoomUtils.Logger.error("stopIVA Preserving pitch and rot.");
-				hassavedlookangles = true;
-				savedpitch = (float)field_internalcamera_currentPitch.GetValue (InternalCamera.Instance);
-				savedrot = (float)field_internalcamera_currentRot.GetValue (InternalCamera.Instance);
-			} else {
-				ProbeControlRoomUtils.Logger.error("stopIVA NOT Preserving pitch and rot because fields are missing!");
-			}
 
             isActive = false;
 			needCamReset = false;
@@ -635,6 +623,24 @@ namespace ProbeControlRoom
 
 				//Kill vessel labels
 				SetVesselLabelsValue (false);
+
+				//Save where the camera was looking.
+				//We have to do this here because if the part is shut down,
+				//we don't have time to get it before it is lost.
+				if (field_internalcamera_currentPitch != null && field_internalcamera_currentRot != null && field_internalcamera_currentZoom != null) {
+					float newpitch = (float)field_internalcamera_currentPitch.GetValue (InternalCamera.Instance);
+					float newrot = (float)field_internalcamera_currentRot.GetValue (InternalCamera.Instance);
+					float newzoom = (float)field_internalcamera_currentZoom.GetValue (InternalCamera.Instance);
+
+					//Note that if the PCRIVA got broken, these are zero.
+					if (newpitch != 0f || newrot != 0f)
+					{
+						hassavedlookangles = true;
+						savedpitch = newpitch;
+						savedrot = newrot;
+						savedzoom = newzoom;
+					}
+				}
 
 
 			}
@@ -774,6 +780,7 @@ namespace ProbeControlRoom
 				if (aPart != oldPart) {
 					ProbeControlRoomUtils.Logger.message ("vesselModified() - Have to change part.");
 					//Can still PCR IVA but the part has changed, restart
+
 					stopIVA ();
 					startIVA ();
 				}
@@ -909,11 +916,13 @@ namespace ProbeControlRoom
 
 
                 //Select primary part for use and verify it's initialized
-                ProbeControlRoomUtils.Logger.message("refreshVesselRooms() - Initializing room in " + aPart.ToString());
+				ProbeControlRoomUtils.Logger.message("refreshVesselRooms() - Initializing room in " + rooms[0].ToString());
                 aPart = rooms[0];
 				cachedrenderers = null;
                 aPart.internalModel.Initialize(aPart);
                 aPart.internalModel.SetVisible(false);
+
+				ProbeControlRoomUtils.Logger.message ("refreshVesselRooms() - C");
 
                 //Remove Excess internal models
                 if (rooms.Count > 1)
@@ -947,7 +956,8 @@ namespace ProbeControlRoom
                 canPCRIVA = true;
             }
 
-            pcrNoModel.Clear();
+			if (pcrNoModel != null)
+				pcrNoModel.Clear ();
             pcrNoModel = null;
 
             // Set app launcher availability based on current layout.
