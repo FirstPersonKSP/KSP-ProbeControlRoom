@@ -527,7 +527,7 @@ namespace ProbeControlRoom
 			float oldpitch = 0f;
 			float oldrot = 0f;
 			if (field_internalcamera_currentPitch != null && field_internalcamera_currentRot != null) {
-				ProbeControlRoomUtils.Logger.error("Preserving pitch and rot.");
+				ProbeControlRoomUtils.Logger.message("Preserving pitch and rot.");
 				oldpitch = (float)field_internalcamera_currentPitch.GetValue (InternalCamera.Instance);
 				oldrot = (float)field_internalcamera_currentRot.GetValue (InternalCamera.Instance);
 			} else {
