@@ -1,10 +1,10 @@
 {
 	"NAME"		: "ProbeControlRoom",
-	"URL"		: "https://raw.githubusercontent.com/icedown/KSP-ProbeControlRoom/master/GameData/ProbeControlRoom/ProbeControlRoom.version",
-	"DOWNLOAD"	: "https://github.com/icedown/KSP-ProbeControlRoom/releases",
+	"URL"		: "https://raw.githubusercontent.com/Virindi-AC/KSP-ProbeControlRoom/master/GameData/ProbeControlRoom/ProbeControlRoom.version",
+	"DOWNLOAD"	: "https://github.com/Virindi-AC/KSP-ProbeControlRoom/releases",
 	"GITHUB"	:
 	{
-		"USERNAME" 	: "icedown",
+		"USERNAME" 	: "Virindi-AC",
 		"REPOSITORY": "KSP-ProbeControlRoom",
 		"ALLOW_PRE_RELEASE": false
 	},
@@ -12,19 +12,19 @@
 	{
 		"MAJOR" : 1,
 		"MINOR" : 2,
-		"PATCH" : 1,
-		"BUILD" : 3
+		"PATCH" : 2,
+		"BUILD" : 5
 	},
 	"KSP_VERSION":
 	{
 		"MAJOR": 1,
 		"MINOR": 2,
-		"PATCH": 1
+		"PATCH": 2
 	},
 	"KSP_VERSION_MIN":
 	{
 		"MAJOR": 1,
 		"MINOR": 2,
-		"PATCH": 0
+		"PATCH": 2
 	}
 }
