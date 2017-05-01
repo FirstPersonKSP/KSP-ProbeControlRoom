@@ -1,11 +1,11 @@
 {
-    "spec_version": "1.2.1.0",
+    "spec_version": "1",
     "identifier"  : "ProbeControlRoom",
     "license"     : "CC-BY-NC-SA-3.0",
 	"$vref" 	  : "#/ckan/ksp-avc",
-	"#kref"		  : "#/ckan/spacedock/1061",
-	"download"	  : "https://github.com/icedown/KSP-ProbeControlRoom/releases/download/1.2.1.0/ProbeControlRoom1.2.1.0.zip",
-	
+	"#kref"		  : "#/ckan/github/Virindi-AC/KSP-ProbeControlRoom",
+	"download"	  : "https://github.com/Virindi-AC/KSP-ProbeControlRoom/releases/download/1.2.2.5/ProbeControlRoom-1.2.2.5.zip",
+
 	"install"	  : [
 	{
 		"file"    : "GameData/ProbeControlRoom",
