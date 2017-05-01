@@ -61,6 +61,10 @@ namespace ProbeControlRoom
 		private static System.Reflection.MethodInfo method_vessellabels_enablealllabels = null;
 		private static System.Reflection.MethodInfo method_vessellabels_disablealllabels = null;
 
+		//Highlight in flight?
+		bool HasCachedHighlightInFlightSetting = false;
+		bool CachedHighlightInFlightSetting = true;
+
         //Application 
         private static ApplicationLauncherButton appLauncherButton = null;
         //App launcher in use
@@ -270,6 +274,13 @@ namespace ProbeControlRoom
 				GameSettings.TOGGLE_LABELS.secondary = CachedLabelSecondaryKey;
 			}
 
+			//Restore part highlighter
+			if (HasCachedHighlightInFlightSetting)
+			{
+				HasCachedHighlightInFlightSetting = false;
+				GameSettings.INFLIGHT_HIGHLIGHT = CachedHighlightInFlightSetting;
+			}
+
             ProbeControlRoomUtils.Logger.debug("OnDestroy()");
 
 			GameEvents.onVesselChange.Remove(OnVesselChange);
@@ -447,6 +458,16 @@ namespace ProbeControlRoom
 			}
 			SetVesselLabelsValue (false);
 
+
+			//Highlighters
+			if (!HasCachedHighlightInFlightSetting)
+			{
+				HasCachedHighlightInFlightSetting = true;
+				CachedHighlightInFlightSetting = GameSettings.INFLIGHT_HIGHLIGHT;
+			}
+			GameSettings.INFLIGHT_HIGHLIGHT = false;
+
+
             //Unsure of this purpose at the moment
             FlightCamera.fetch.EnableCamera();
             FlightCamera.fetch.DeactivateUpdate();
@@ -583,6 +604,12 @@ namespace ProbeControlRoom
 				GameSettings.TOGGLE_LABELS.secondary = CachedLabelSecondaryKey;
 			}
 
+			//Restore part highlighter
+			if (HasCachedHighlightInFlightSetting)
+			{
+				HasCachedHighlightInFlightSetting = false;
+				GameSettings.INFLIGHT_HIGHLIGHT = CachedHighlightInFlightSetting;
+			}
 
             //Switch back to normal cameras
             CameraManager.ICameras_DeactivateAll();
@@ -608,6 +635,8 @@ namespace ProbeControlRoom
 
 				//Kill vessel labels
 				SetVesselLabelsValue (false);
+
+
 			}
 		}
 
