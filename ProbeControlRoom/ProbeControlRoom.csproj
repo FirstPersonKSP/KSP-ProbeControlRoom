@@ -60,6 +60,7 @@
     <Compile Include="ProbeControlRoomPart.cs" />
     <Compile Include="ProbeControlRoomUtils.cs" />
     <Compile Include="ProbeControlRoomSettings.cs" />
+    <Compile Include="DynamicEmitFields.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
