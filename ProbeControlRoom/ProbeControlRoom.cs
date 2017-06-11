@@ -61,8 +61,8 @@ namespace ProbeControlRoom
 		bool HasCachedVesselLabelsSetting = false;
 		bool CachedVesselLabelsSetting = false;
 		bool VesselLabelKeyDisabled = false;
-		KeyCode CachedLabelPrimaryKey = GameSettings.TOGGLE_LABELS.primary;
-		KeyCode CachedLabelSecondaryKey = GameSettings.TOGGLE_LABELS.secondary;
+		KeyCodeExtended CachedLabelPrimaryKey = GameSettings.TOGGLE_LABELS.primary;
+        KeyCodeExtended CachedLabelSecondaryKey = GameSettings.TOGGLE_LABELS.secondary;
 		private static System.Reflection.MethodInfo method_vessellabels_enablealllabels = null;
 		private static System.Reflection.MethodInfo method_vessellabels_disablealllabels = null;
 
@@ -467,8 +467,8 @@ namespace ProbeControlRoom
 				VesselLabelKeyDisabled = true;
 				CachedLabelPrimaryKey = GameSettings.TOGGLE_LABELS.primary;
 				CachedLabelSecondaryKey = GameSettings.TOGGLE_LABELS.secondary;
-				GameSettings.TOGGLE_LABELS.primary = KeyCode.None;
-				GameSettings.TOGGLE_LABELS.secondary = KeyCode.None;
+				GameSettings.TOGGLE_LABELS.primary = new KeyCodeExtended(KeyCode.None);
+				GameSettings.TOGGLE_LABELS.secondary = new KeyCodeExtended(KeyCode.None);
 			}
 			SetVesselLabelsValue (false);
 
