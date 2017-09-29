@@ -126,7 +126,8 @@ namespace ProbeControlRoom
             GameEvents.onVesselChange.Add(OnVesselChange);
             GameEvents.onVesselWasModified.Add(OnVesselModified);
             GameEvents.onGUIApplicationLauncherReady.Add(onGUIApplicationLauncherReady);
-			GameEvents.OnMapExited.Add(onMapExited);
+            GameEvents.onGUIApplicationLauncherDestroyed.Add(OnGUIAppLauncherDestroyed);
+            GameEvents.OnMapExited.Add(onMapExited);
 			GameEvents.OnCameraChange.Add(onCameraChange);
 			GameEvents.onGameSceneSwitchRequested.Add(OnGameSceneSwitchRequested);
 
@@ -142,8 +143,16 @@ namespace ProbeControlRoom
 		{
 			if (isActive)
 				stopIVA ();
+            
 		}
 
+        void OnGUIAppLauncherDestroyed()
+        {
+            if (appLauncherButton != null)
+            {
+                ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
+            }
+        }
         /// <summary>
         /// Setup app launcher button when the GUI is ready
         /// </summary>
@@ -300,7 +309,8 @@ namespace ProbeControlRoom
 			GameEvents.onVesselChange.Remove(OnVesselChange);
 			GameEvents.onVesselWasModified.Remove(OnVesselModified);
 			GameEvents.onGUIApplicationLauncherReady.Remove(onGUIApplicationLauncherReady);
-			GameEvents.OnMapExited.Remove(onMapExited);
+            GameEvents.onGUIApplicationLauncherDestroyed.Rempve(OnGUIAppLauncherDestroyed);
+            GameEvents.OnMapExited.Remove(onMapExited);
 			GameEvents.OnCameraChange.Remove(onCameraChange);
 			GameEvents.onGameSceneSwitchRequested.Remove(OnGameSceneSwitchRequested);
 

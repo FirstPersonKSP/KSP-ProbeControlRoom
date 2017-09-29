@@ -1,0 +1,2 @@
+1.2.2.7
+	Removed toolbar button when leaving flight scene

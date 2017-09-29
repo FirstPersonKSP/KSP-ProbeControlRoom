@@ -1,11 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProbeControlRoom", "ProbeControlRoom\ProbeControlRoom.csproj", "{6BB6BF04-C58F-47EE-A4BB-3CADA7850606}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProbeControlRoomToolbar", "ProbeControlRoomToolbar\ProbeControlRoomToolbar.csproj", "{F85B9451-74D5-4C48-8647-76A779ADD3FF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{5634DF77-97E5-459F-B03A-6A9791A75B34}"
+	ProjectSection(SolutionItems) = preProject
+		buildRelease.bat = buildRelease.bat
+		ChangeLog.txt = ChangeLog.txt
+		deploy.bat = deploy.bat
+		LICENSE.txt = LICENSE.txt
+		ProbeControlRoom.version = ProbeControlRoom.version
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +34,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64059492-3E12-45A1-B722-3ABA71B45823}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = ProbeControlRoom\ProbeControlRoom.csproj
