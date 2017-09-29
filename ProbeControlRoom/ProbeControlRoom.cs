@@ -309,7 +309,7 @@ namespace ProbeControlRoom
 			GameEvents.onVesselChange.Remove(OnVesselChange);
 			GameEvents.onVesselWasModified.Remove(OnVesselModified);
 			GameEvents.onGUIApplicationLauncherReady.Remove(onGUIApplicationLauncherReady);
-            GameEvents.onGUIApplicationLauncherDestroyed.Rempve(OnGUIAppLauncherDestroyed);
+            GameEvents.onGUIApplicationLauncherDestroyed.Remove(OnGUIAppLauncherDestroyed);
             GameEvents.OnMapExited.Remove(onMapExited);
 			GameEvents.OnCameraChange.Remove(onCameraChange);
 			GameEvents.onGameSceneSwitchRequested.Remove(OnGameSceneSwitchRequested);
