@@ -1,10 +1,10 @@
 {
 	"NAME"		: "ProbeControlRoom",
-	"URL"		: "https://raw.githubusercontent.com/Virindi-AC/KSP-ProbeControlRoom/master/GameData/ProbeControlRoom/ProbeControlRoom.version",
-	"DOWNLOAD"	: "https://github.com/Virindi-AC/KSP-ProbeControlRoom/releases",
+	"URL"		: "https://raw.githubusercontent.com/linuxgurugamer/KSP-ProbeControlRoom/master/ProbeControlRoom.version",
+	"DOWNLOAD"	: "https://github.com/linuxgurugamer/KSP-ProbeControlRoom/releases",
 	"GITHUB"	:
 	{
-		"USERNAME" 	: "Virindi-AC",
+		"USERNAME" 	: "Linuxgurugamer",
 		"REPOSITORY": "KSP-ProbeControlRoom",
 		"ALLOW_PRE_RELEASE": false
 	},
@@ -13,18 +13,18 @@
 		"MAJOR" : 1,
 		"MINOR" : 2,
 		"PATCH" : 2,
-		"BUILD" : 8
+		"BUILD" : 9
 	},
 	"KSP_VERSION":
 	{
 		"MAJOR": 1,
 		"MINOR": 3,
-		"PATCH": 0
+		"PATCH": 1
 	},
 	"KSP_VERSION_MIN":
 	{
 		"MAJOR": 1,
 		"MINOR": 3,
-		"PATCH": 0
+		"PATCH": 1
 	}
 }
