@@ -3,7 +3,6 @@
 
 rem Set variables here
 
-set H=R:\KSP_1.3.0_dev
 set GAMEDIR=ProbeControlRoom
 set LICENSE=License.txt
 set README=ReadMe.md

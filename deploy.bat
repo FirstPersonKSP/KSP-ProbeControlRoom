@@ -1,7 +1,7 @@
 
 @echo off
 
-set H=R:\KSP_1.3.0_dev
+set H=R:\KSP_1.4.1_dev
 set GAMEDIR=ProbeControlRoom
 
 echo %H%

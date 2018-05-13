@@ -1,2 +1,6 @@
 1.2.2.8
 	Removed toolbar button when leaving flight scene
+
+1.2.2.10
+	Updated for 1.4.*
+	Added support for the ToolbarController
