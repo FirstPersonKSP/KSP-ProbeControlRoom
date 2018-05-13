@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using KSP.UI.Screens;
-
+using ToolbarControl_NS;
 
 namespace ProbeControlRoom
 {
@@ -71,13 +71,17 @@ namespace ProbeControlRoom
 		bool CachedHighlightInFlightSetting = true;
 
         //Application 
-        private static ApplicationLauncherButton appLauncherButton = null;
+        //private static ApplicationLauncherButton appLauncherButton = null;
+        ToolbarControl toolbarControl;
         //App launcher in use
         private bool AppLauncher = false;
 
         //App launcher icons
-        private Texture2D IconActivate = null;
-        private Texture2D IconDeactivate = null;
+        string  IconActivate = "ProbeControlRoom/Icons/ProbeControlRoomToolbarDisabled";
+        string IconDeactivate = "ProbeControlRoom/Icons/ProbeControlRoomToolbarEnabled";
+
+        string enabledTexture = "ProbeControlRoom/Icons/ProbeControlRoomToolbarEnabled";
+        string disabledTexture = "ProbeControlRoom/Icons/ProbeControlRoomToolbarDisabled";
 
 		static void GetFields()
 		{
@@ -148,9 +152,11 @@ namespace ProbeControlRoom
 
         void OnGUIAppLauncherDestroyed()
         {
-            if (appLauncherButton != null)
+            if (toolbarControl != null)
             {
-                ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
+                //ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
+                toolbarControl.OnDestroy();
+                Destroy(toolbarControl);
             }
         }
         /// <summary>
@@ -160,11 +166,11 @@ namespace ProbeControlRoom
         {
             if (!AppLauncher)
             {
-                appLauncherButton = InitializeApplicationButton();
+                InitializeApplicationButton();
                 AppLauncher = true;
                 if(!canPCRIVA)
                 {
-                    appLauncherButton.Disable();
+                    toolbarControl.Enabled = false;
                 }
             }
            
@@ -179,12 +185,15 @@ namespace ProbeControlRoom
 			//needCamReset = true;
 		}
 
+        internal const string MODID = "PCR_NS";
+        internal const string MODNAME = "Probe Control Room";
         /// <summary>
         /// Sets up the App launcher button to activate and deactivate PCR
         /// </summary>
         /// <returns>Reference to created button</returns>
-        ApplicationLauncherButton InitializeApplicationButton()
+        void InitializeApplicationButton()
         {
+#if false
             ApplicationLauncherButton Button = null;
 
             IconActivate = GameDatabase.Instance.GetTexture("ProbeControlRoom/Icons/ProbeControlRoomToolbarDisabled", false);
@@ -200,16 +209,28 @@ namespace ProbeControlRoom
                 null,
                 ApplicationLauncher.AppScenes.FLIGHT,
                 IconActivate);
+#endif
 
-            if (Button == null)
+
+         toolbarControl = gameObject.AddComponent<ToolbarControl>();
+            toolbarControl.AddToAllToolbars(OnAppLauncherTrue,
+                OnAppLauncherFalse,
+                ApplicationLauncher.AppScenes.FLIGHT,
+                MODID,
+                "probeControlRoomButton",
+                IconActivate, IconDeactivate,
+                enabledTexture, disabledTexture,
+                MODNAME
+            );
+
+            if (toolbarControl == null)
             {
                 ProbeControlRoomUtils.Logger.debug("InitializeApplicationButton(): Was unable to initialize button");
             }
 
 			if (isActive)
-				Button.SetTexture (IconDeactivate);
+                toolbarControl.SetTexture (IconDeactivate, disabledTexture);
 
-            return Button;
         }
 
         /// <summary>
@@ -308,16 +329,21 @@ namespace ProbeControlRoom
 
 			GameEvents.onVesselChange.Remove(OnVesselChange);
 			GameEvents.onVesselWasModified.Remove(OnVesselModified);
-			GameEvents.onGUIApplicationLauncherReady.Remove(onGUIApplicationLauncherReady);
+            //GameEvents.onGUIApplicationLauncherReady.Remove(onGUIApplicationLauncherReady);
+            onGUIApplicationLauncherReady();
             GameEvents.onGUIApplicationLauncherDestroyed.Remove(OnGUIAppLauncherDestroyed);
             GameEvents.OnMapExited.Remove(onMapExited);
 			GameEvents.OnCameraChange.Remove(onCameraChange);
 			GameEvents.onGameSceneSwitchRequested.Remove(OnGameSceneSwitchRequested);
 
-            if (appLauncherButton != null)
+            if (toolbarControl != null)
             {
+#if false
                 ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
                 appLauncherButton = null;
+#endif
+                toolbarControl.OnDestroy();
+                Destroy(toolbarControl);
             }
             Instance = null;
         }
@@ -510,9 +536,9 @@ namespace ProbeControlRoom
             ProbeControlRoomUtils.Logger.debug("startIVA() - DONE");
 
 			//GUI may not be started yet.
-			if (appLauncherButton != null) {
-				//Change app launcher button icon
-				appLauncherButton.SetTexture (IconDeactivate);
+			if (toolbarControl != null) {
+                //Change app launcher button icon
+                toolbarControl.SetTexture (IconDeactivate, disabledTexture);
 			}
 
 			if (hassavedlookangles && field_set_internalcamera_currentPitch != null && field_set_internalcamera_currentRot != null && field_set_internalcamera_currentZoom != null) {
@@ -629,7 +655,7 @@ namespace ProbeControlRoom
             ProbeControlRoomUtils.Logger.debug("stopIVA() - CHECKMARK");
 
             //Change app launcher button
-            appLauncherButton.SetTexture(IconActivate);
+            toolbarControl.SetTexture(IconActivate, enabledTexture);
         }
 
 		public void Update()
@@ -985,11 +1011,11 @@ namespace ProbeControlRoom
             {
                 if (canPCRIVA)
                 {
-                    appLauncherButton.Enable();
+                    toolbarControl.Enabled = true;
                 }
                 else
                 {
-                    appLauncherButton.Disable();
+                    toolbarControl.Enabled = false;
                 }
             }
             return;
