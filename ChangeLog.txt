@@ -19,3 +19,6 @@ ChangeLog
 	Fixed button icon when enabling & disabling mod
 	Added AssemblyFileVersion
 	Updated version file for 1.12
+
+1.2.4.1
+	Changed name of DLL for CKAN compatibility
