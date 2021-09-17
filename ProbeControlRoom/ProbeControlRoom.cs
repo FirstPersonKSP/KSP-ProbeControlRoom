@@ -18,38 +18,38 @@ namespace ProbeControlRoom
 
         //Is IVA currently active and visible
         public static bool isActive = false;
-		private bool needCamReset = false;
+        private bool needCamReset = false;
 
-		//Sun
-		IVASun CachedSun = null;
-		bool SunIsEnabled = true;
+        //Sun
+        IVASun CachedSun = null;
+        bool SunIsEnabled = true;
 
-		//Stuff to mess with
-		static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldGet<float, InternalCamera> field_get_internalcamera_currentPitch;
-		static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldGet<float, InternalCamera> field_get_internalcamera_currentRot;
-		static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldGet<float, InternalCamera> field_get_internalcamera_currentZoom;
-		static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldSet<float, InternalCamera> field_set_internalcamera_currentPitch;
-		static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldSet<float, InternalCamera> field_set_internalcamera_currentRot;
-		static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldSet<float, InternalCamera> field_set_internalcamera_currentZoom;
-		bool hassavedlookangles = false;
-		float savedpitch = 0f;
-		float savedrot = 0f;
-		float savedzoom = 0f;
-        
+        //Stuff to mess with
+        static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldGet<float, InternalCamera> field_get_internalcamera_currentPitch;
+        static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldGet<float, InternalCamera> field_get_internalcamera_currentRot;
+        static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldGet<float, InternalCamera> field_get_internalcamera_currentZoom;
+        static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldSet<float, InternalCamera> field_set_internalcamera_currentPitch;
+        static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldSet<float, InternalCamera> field_set_internalcamera_currentRot;
+        static VirindiHelpers.DynamicEmitFields.delCreateDynamicInstanceFieldSet<float, InternalCamera> field_set_internalcamera_currentZoom;
+        bool hassavedlookangles = false;
+        float savedpitch = 0f;
+        float savedrot = 0f;
+        float savedzoom = 0f;
+
         //Vessel has IVA with crew onboard
         private bool canStockIVA;
-		private bool maybecanstockiva;
-        
+        private bool maybecanstockiva;
+
         //Vessel has a probe control room available
         private bool canPCRIVA;
-        
+
         //Current PCR module
         private ProbeControlRoomPart aModule;
 
         //Current PCR part with internal module
         private Part aPart;
-		private MeshRenderer[] cachedrenderers = null;
-        
+        private MeshRenderer[] cachedrenderers = null;
+
         //Storage for original game settings
         float shipVolumeBackup = GameSettings.SHIP_VOLUME;
         float ambianceVolumeBackup = GameSettings.AMBIENCE_VOLUME;
@@ -57,18 +57,18 @@ namespace ProbeControlRoom
         float cameraFXInternalBackup = GameSettings.CAMERA_FX_INTERNAL;
         float cameraFXExternalBackup = GameSettings.CAMERA_FX_EXTERNAL;
 
-		//Vessel labels settings
-		bool HasCachedVesselLabelsSetting = false;
-		bool CachedVesselLabelsSetting = false;
-		bool VesselLabelKeyDisabled = false;
-		KeyCodeExtended CachedLabelPrimaryKey = GameSettings.TOGGLE_LABELS.primary;
+        //Vessel labels settings
+        bool HasCachedVesselLabelsSetting = false;
+        bool CachedVesselLabelsSetting = false;
+        bool VesselLabelKeyDisabled = false;
+        KeyCodeExtended CachedLabelPrimaryKey = GameSettings.TOGGLE_LABELS.primary;
         KeyCodeExtended CachedLabelSecondaryKey = GameSettings.TOGGLE_LABELS.secondary;
-		private static System.Reflection.MethodInfo method_vessellabels_enablealllabels = null;
-		private static System.Reflection.MethodInfo method_vessellabels_disablealllabels = null;
+        private static System.Reflection.MethodInfo method_vessellabels_enablealllabels = null;
+        private static System.Reflection.MethodInfo method_vessellabels_disablealllabels = null;
 
-		//Highlight in flight?
-		bool HasCachedHighlightInFlightSetting = false;
-		bool CachedHighlightInFlightSetting = true;
+        //Highlight in flight?
+        bool HasCachedHighlightInFlightSetting = false;
+        bool CachedHighlightInFlightSetting = true;
 
         //Application 
         //private static ApplicationLauncherButton appLauncherButton = null;
@@ -77,33 +77,33 @@ namespace ProbeControlRoom
         private bool AppLauncher = false;
 
         //App launcher icons
-        string  IconActivate = "ProbeControlRoom/Icons/ProbeControlRoomToolbarDisabled";
+        string IconActivate = "ProbeControlRoom/Icons/ProbeControlRoomToolbarDisabled";
         string IconDeactivate = "ProbeControlRoom/Icons/ProbeControlRoomToolbarEnabled";
 
         string enabledTexture = "ProbeControlRoom/Icons/ProbeControlRoomToolbarEnabled";
         string disabledTexture = "ProbeControlRoom/Icons/ProbeControlRoomToolbarDisabled";
 
-		static void GetFields()
-		{
-			if (field_get_internalcamera_currentPitch == null)
-				field_get_internalcamera_currentPitch = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldGet<float, InternalCamera> ("currentPitch");
-			if (field_get_internalcamera_currentRot == null)
-				field_get_internalcamera_currentRot = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldGet<float, InternalCamera> ("currentRot");
-			if (field_get_internalcamera_currentZoom == null)
-				field_get_internalcamera_currentZoom = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldGet<float, InternalCamera> ("currentZoom");
+        static void GetFields()
+        {
+            if (field_get_internalcamera_currentPitch == null)
+                field_get_internalcamera_currentPitch = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldGet<float, InternalCamera>("currentPitch");
+            if (field_get_internalcamera_currentRot == null)
+                field_get_internalcamera_currentRot = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldGet<float, InternalCamera>("currentRot");
+            if (field_get_internalcamera_currentZoom == null)
+                field_get_internalcamera_currentZoom = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldGet<float, InternalCamera>("currentZoom");
 
-			if (field_set_internalcamera_currentPitch == null)
-				field_set_internalcamera_currentPitch = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldSet<float, InternalCamera> ("currentPitch");
-			if (field_set_internalcamera_currentRot == null)
-				field_set_internalcamera_currentRot = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldSet<float, InternalCamera> ("currentRot");
-			if (field_set_internalcamera_currentZoom == null)
-				field_set_internalcamera_currentZoom = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldSet<float, InternalCamera> ("currentZoom");
+            if (field_set_internalcamera_currentPitch == null)
+                field_set_internalcamera_currentPitch = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldSet<float, InternalCamera>("currentPitch");
+            if (field_set_internalcamera_currentRot == null)
+                field_set_internalcamera_currentRot = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldSet<float, InternalCamera>("currentRot");
+            if (field_set_internalcamera_currentZoom == null)
+                field_set_internalcamera_currentZoom = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldSet<float, InternalCamera>("currentZoom");
 
-			if (method_vessellabels_enablealllabels == null)
-				method_vessellabels_enablealllabels = typeof(VesselLabels).GetMethod ("EnableAllLabels", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Instance);
-			if (method_vessellabels_disablealllabels == null)
-				method_vessellabels_disablealllabels = typeof(VesselLabels).GetMethod ("DisableAllLabels", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Instance);
-		}
+            if (method_vessellabels_enablealllabels == null)
+                method_vessellabels_enablealllabels = typeof(VesselLabels).GetMethod("EnableAllLabels", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Instance);
+            if (method_vessellabels_disablealllabels == null)
+                method_vessellabels_disablealllabels = typeof(VesselLabels).GetMethod("DisableAllLabels", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Instance);
+        }
 
         /// <summary>
         /// Startup and initialization
@@ -114,12 +114,14 @@ namespace ProbeControlRoom
             Instance = this;
 
 
-			try{
-				GetFields();
-			}
-			catch (Exception ex) {
-				ProbeControlRoomUtils.Logger.debug("Exception finding fields: " + ex.ToString());
-			}
+            try
+            {
+                GetFields();
+            }
+            catch (Exception ex)
+            {
+                ProbeControlRoomUtils.Logger.debug("Exception finding fields: " + ex.ToString());
+            }
 
 
             refreshVesselRooms();
@@ -132,8 +134,8 @@ namespace ProbeControlRoom
             GameEvents.onGUIApplicationLauncherReady.Add(onGUIApplicationLauncherReady);
             GameEvents.onGUIApplicationLauncherDestroyed.Add(OnGUIAppLauncherDestroyed);
             GameEvents.OnMapExited.Add(onMapExited);
-			GameEvents.OnCameraChange.Add(onCameraChange);
-			GameEvents.onGameSceneSwitchRequested.Add(OnGameSceneSwitchRequested);
+            GameEvents.OnCameraChange.Add(onCameraChange);
+            GameEvents.onGameSceneSwitchRequested.Add(OnGameSceneSwitchRequested);
 
             //If Manely mode is set true, force straight into IVA
             if (ProbeControlRoomSettings.Instance.ForcePCROnly)
@@ -143,12 +145,12 @@ namespace ProbeControlRoom
             }
         }
 
-		void OnGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> scn)
-		{
-			if (isActive)
-				stopIVA ();
-            
-		}
+        void OnGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> scn)
+        {
+            if (isActive)
+                stopIVA();
+
+        }
 
         void OnGUIAppLauncherDestroyed()
         {
@@ -168,22 +170,24 @@ namespace ProbeControlRoom
             {
                 InitializeApplicationButton();
                 AppLauncher = true;
-                if(!canPCRIVA)
+                if (!canPCRIVA)
                 {
                     toolbarControl.Enabled = false;
                 }
             }
-           
+
         }
 
-		private void onMapExited() {
-			needCamReset = true; 
-		}
+        private void onMapExited()
+        {
+            needCamReset = true;
+        }
 
-		private void onCameraChange(CameraManager.CameraMode c){
-			//ProbeControlRoomUtils.Logger.message("OnCameraChange: " + c.ToString());
-			//needCamReset = true;
-		}
+        private void onCameraChange(CameraManager.CameraMode c)
+        {
+            //ProbeControlRoomUtils.Logger.message("OnCameraChange: " + c.ToString());
+            //needCamReset = true;
+        }
 
         internal const string MODID = "PCR_NS";
         internal const string MODNAME = "Probe Control Room";
@@ -193,26 +197,7 @@ namespace ProbeControlRoom
         /// <returns>Reference to created button</returns>
         void InitializeApplicationButton()
         {
-#if false
-            ApplicationLauncherButton Button = null;
-
-            IconActivate = GameDatabase.Instance.GetTexture("ProbeControlRoom/Icons/ProbeControlRoomToolbarDisabled", false);
-            IconDeactivate = GameDatabase.Instance.GetTexture("ProbeControlRoom/Icons/ProbeControlRoomToolbarEnabled", false);
-
-
-            Button = ApplicationLauncher.Instance.AddModApplication(
-                OnAppLauncherTrue,
-                OnAppLauncherFalse,
-                null,
-                null,
-                null,
-                null,
-                ApplicationLauncher.AppScenes.FLIGHT,
-                IconActivate);
-#endif
-
-
-         toolbarControl = gameObject.AddComponent<ToolbarControl>();
+            toolbarControl = gameObject.AddComponent<ToolbarControl>();
             toolbarControl.AddToAllToolbars(OnAppLauncherTrue,
                 OnAppLauncherFalse,
                 ApplicationLauncher.AppScenes.FLIGHT,
@@ -228,8 +213,8 @@ namespace ProbeControlRoom
                 ProbeControlRoomUtils.Logger.debug("InitializeApplicationButton(): Was unable to initialize button");
             }
 
-			if (isActive)
-                toolbarControl.SetTexture (IconDeactivate, disabledTexture);
+            if (isActive)
+                toolbarControl.SetTexture(IconDeactivate, disabledTexture);
 
         }
 
@@ -238,7 +223,8 @@ namespace ProbeControlRoom
         /// </summary>
         public static bool vesselCanIVA
         {
-            get {
+            get
+            {
                 return Instance.canPCRIVA;
             }
         }
@@ -279,8 +265,8 @@ namespace ProbeControlRoom
         /// </summary>
         public void OnDestroy()
         {
-			SetSun (true);
-			CachedSun = null;
+            SetSun(true);
+            CachedSun = null;
 
             //in case of revert to launch while in IVA, Update() won't detect it
             //and startIVA(p) will be called without prior stopIVA
@@ -304,37 +290,37 @@ namespace ProbeControlRoom
                 GameSettings.CAMERA_FX_EXTERNAL = cameraFXExternalBackup;
             }
 
-			ProbeControlRoomUtils.Logger.message("OnDestroy() - VesselLabels - " + HasCachedVesselLabelsSetting.ToString() + ", " + VesselLabelKeyDisabled.ToString());
-			//Restore vessel labels capability.
-			if (HasCachedVesselLabelsSetting)
-			{
-				HasCachedVesselLabelsSetting = false;
-				SetVesselLabelsValue (CachedVesselLabelsSetting);
-			}
-			if (VesselLabelKeyDisabled)
-			{
-				VesselLabelKeyDisabled = false;
-				GameSettings.TOGGLE_LABELS.primary = CachedLabelPrimaryKey;
-				GameSettings.TOGGLE_LABELS.secondary = CachedLabelSecondaryKey;
-			}
+            ProbeControlRoomUtils.Logger.message("OnDestroy() - VesselLabels - " + HasCachedVesselLabelsSetting.ToString() + ", " + VesselLabelKeyDisabled.ToString());
+            //Restore vessel labels capability.
+            if (HasCachedVesselLabelsSetting)
+            {
+                HasCachedVesselLabelsSetting = false;
+                SetVesselLabelsValue(CachedVesselLabelsSetting);
+            }
+            if (VesselLabelKeyDisabled)
+            {
+                VesselLabelKeyDisabled = false;
+                GameSettings.TOGGLE_LABELS.primary = CachedLabelPrimaryKey;
+                GameSettings.TOGGLE_LABELS.secondary = CachedLabelSecondaryKey;
+            }
 
-			//Restore part highlighter
-			if (HasCachedHighlightInFlightSetting)
-			{
-				HasCachedHighlightInFlightSetting = false;
-				GameSettings.INFLIGHT_HIGHLIGHT = CachedHighlightInFlightSetting;
-			}
+            //Restore part highlighter
+            if (HasCachedHighlightInFlightSetting)
+            {
+                HasCachedHighlightInFlightSetting = false;
+                GameSettings.INFLIGHT_HIGHLIGHT = CachedHighlightInFlightSetting;
+            }
 
             ProbeControlRoomUtils.Logger.debug("OnDestroy()");
 
-			GameEvents.onVesselChange.Remove(OnVesselChange);
-			GameEvents.onVesselWasModified.Remove(OnVesselModified);
+            GameEvents.onVesselChange.Remove(OnVesselChange);
+            GameEvents.onVesselWasModified.Remove(OnVesselModified);
             //GameEvents.onGUIApplicationLauncherReady.Remove(onGUIApplicationLauncherReady);
             onGUIApplicationLauncherReady();
             GameEvents.onGUIApplicationLauncherDestroyed.Remove(OnGUIAppLauncherDestroyed);
             GameEvents.OnMapExited.Remove(onMapExited);
-			GameEvents.OnCameraChange.Remove(onCameraChange);
-			GameEvents.onGameSceneSwitchRequested.Remove(OnGameSceneSwitchRequested);
+            GameEvents.OnCameraChange.Remove(onCameraChange);
+            GameEvents.onGameSceneSwitchRequested.Remove(OnGameSceneSwitchRequested);
 
             if (toolbarControl != null)
             {
@@ -348,54 +334,54 @@ namespace ProbeControlRoom
             Instance = null;
         }
 
-		void SetSun(bool on)
-		{
-			ProbeControlRoomUtils.Logger.message("SetSun() - " + on.ToString());
+        void SetSun(bool on)
+        {
+            ProbeControlRoomUtils.Logger.message("SetSun() - " + on.ToString());
 
-			if (CachedSun == null)
-				CachedSun = (IVASun)FindObjectOfType(typeof(IVASun));
-			if (CachedSun == null)
-				return;
+            if (CachedSun == null)
+                CachedSun = (IVASun)FindObjectOfType(typeof(IVASun));
+            if (CachedSun == null)
+                return;
 
-			ProbeControlRoomUtils.Logger.message("SetSun() - SETTING");
-			CachedSun.gameObject.SetActive (on);
-			SunIsEnabled = on;
-		}
+            ProbeControlRoomUtils.Logger.message("SetSun() - SETTING");
+            CachedSun.gameObject.SetActive(on);
+            SunIsEnabled = on;
+        }
 
-		void SetVesselLabelsValue(bool on)
-		{
-			//ProbeControlRoomUtils.Logger.message("SetVesselLabelsValue() - ENTER");
+        void SetVesselLabelsValue(bool on)
+        {
+            //ProbeControlRoomUtils.Logger.message("SetVesselLabelsValue() - ENTER");
 
-			if (GameSettings.FLT_VESSEL_LABELS == on)
-				return;
+            if (GameSettings.FLT_VESSEL_LABELS == on)
+                return;
 
-			VesselLabels lbls = (VesselLabels)FindObjectOfType (typeof(VesselLabels));
+            VesselLabels lbls = (VesselLabels)FindObjectOfType(typeof(VesselLabels));
 
-			ProbeControlRoomUtils.Logger.message("SetVesselLabelsValue() - lbls - " + (lbls != null).ToString());
+            ProbeControlRoomUtils.Logger.message("SetVesselLabelsValue() - lbls - " + (lbls != null).ToString());
 
-			if (on && lbls != null && method_vessellabels_enablealllabels != null)
-			{
-				ProbeControlRoomUtils.Logger.message ("SetVesselLabelsValue() - INVOKE ENABLE");
+            if (on && lbls != null && method_vessellabels_enablealllabels != null)
+            {
+                ProbeControlRoomUtils.Logger.message("SetVesselLabelsValue() - INVOKE ENABLE");
 
-				method_vessellabels_enablealllabels.Invoke (lbls, null);
-				GameSettings.FLT_VESSEL_LABELS = true;
-			}
-			else if (!on && lbls != null && method_vessellabels_disablealllabels != null)
-			{
-				ProbeControlRoomUtils.Logger.message ("SetVesselLabelsValue() - INVOKE DISABLE");
+                method_vessellabels_enablealllabels.Invoke(lbls, null);
+                GameSettings.FLT_VESSEL_LABELS = true;
+            }
+            else if (!on && lbls != null && method_vessellabels_disablealllabels != null)
+            {
+                ProbeControlRoomUtils.Logger.message("SetVesselLabelsValue() - INVOKE DISABLE");
 
-				method_vessellabels_disablealllabels.Invoke (lbls, null);
-				GameSettings.FLT_VESSEL_LABELS = false;
-			}
-			else if (!lbls)
-			{
-				ProbeControlRoomUtils.Logger.message ("SetVesselLabelsValue() - NO LBLS SET");
+                method_vessellabels_disablealllabels.Invoke(lbls, null);
+                GameSettings.FLT_VESSEL_LABELS = false;
+            }
+            else if (!lbls)
+            {
+                ProbeControlRoomUtils.Logger.message("SetVesselLabelsValue() - NO LBLS SET");
 
-				//We are probably leaving flight, so VesselLabels has been eliminated.
-				//Set this for later.
-				GameSettings.FLT_VESSEL_LABELS = on;
-			}
-		}
+                //We are probably leaving flight, so VesselLabels has been eliminated.
+                //Set this for later.
+                GameSettings.FLT_VESSEL_LABELS = on;
+            }
+        }
 
         /// <summary>
         /// Sets up IVA and activates it
@@ -403,23 +389,25 @@ namespace ProbeControlRoom
         /// <returns>True if successful, False on error</returns>
         public bool startIVA()
         {
-			if (FlightGlobals.ActiveVessel == null)
-			{
-				ProbeControlRoomUtils.Logger.debug("startIVA() - return ACTIVE VESSEL NULL");
-				return false;
-			}
+            if (FlightGlobals.ActiveVessel == null)
+            {
+                ProbeControlRoomUtils.Logger.debug("startIVA() - return ACTIVE VESSEL NULL");
+                return false;
+            }
             ProbeControlRoomUtils.Logger.debug("startIVA()");
             Transform actualTransform;
 
-			if (FlightGlobals.ActiveVessel.packed) {
-				ProbeControlRoomUtils.Logger.debug("startIVA() - return vessel still packed!");
-				return false;
-			}
+            if (FlightGlobals.ActiveVessel.packed)
+            {
+                ProbeControlRoomUtils.Logger.debug("startIVA() - return vessel still packed!");
+                return false;
+            }
 
-			if (canStockIVA || FlightGlobals.ActiveVessel.evaController != null) {
-				ProbeControlRoomUtils.Logger.debug("startIVA() - return EVA or IVA");
-				return false;
-			}
+            if (canStockIVA || FlightGlobals.ActiveVessel.evaController != null)
+            {
+                ProbeControlRoomUtils.Logger.debug("startIVA() - return EVA or IVA");
+                return false;
+            }
 
             //Verify active room available
             if (!canPCRIVA)
@@ -434,10 +422,11 @@ namespace ProbeControlRoom
                 ProbeControlRoomUtils.Logger.message("startIVA() Lost our part, refreshing");
                 refreshVesselRooms();
             }
-			if (aPart == null) {
-				ProbeControlRoomUtils.Logger.message("startIVA() Can't find a part. DIE.");
-				return false;
-			}
+            if (aPart == null)
+            {
+                ProbeControlRoomUtils.Logger.message("startIVA() Can't find a part. DIE.");
+                return false;
+            }
 
             //Setup module for transforms
             if (aPart.FindModulesImplementing<ProbeControlRoomPart>().Count == 0)
@@ -492,30 +481,30 @@ namespace ProbeControlRoom
             }
             // TODO: create cfg file with cached vars, on crash to be restored
 
-			//Prevent user from turning on vessel labels
-			if (!HasCachedVesselLabelsSetting)
-			{
-				HasCachedVesselLabelsSetting = true;
-				CachedVesselLabelsSetting = GameSettings.FLT_VESSEL_LABELS;
-			}
-			if (!VesselLabelKeyDisabled)
-			{
-				VesselLabelKeyDisabled = true;
-				CachedLabelPrimaryKey = GameSettings.TOGGLE_LABELS.primary;
-				CachedLabelSecondaryKey = GameSettings.TOGGLE_LABELS.secondary;
-				GameSettings.TOGGLE_LABELS.primary = new KeyCodeExtended(KeyCode.None);
-				GameSettings.TOGGLE_LABELS.secondary = new KeyCodeExtended(KeyCode.None);
-			}
-			SetVesselLabelsValue (false);
+            //Prevent user from turning on vessel labels
+            if (!HasCachedVesselLabelsSetting)
+            {
+                HasCachedVesselLabelsSetting = true;
+                CachedVesselLabelsSetting = GameSettings.FLT_VESSEL_LABELS;
+            }
+            if (!VesselLabelKeyDisabled)
+            {
+                VesselLabelKeyDisabled = true;
+                CachedLabelPrimaryKey = GameSettings.TOGGLE_LABELS.primary;
+                CachedLabelSecondaryKey = GameSettings.TOGGLE_LABELS.secondary;
+                GameSettings.TOGGLE_LABELS.primary = new KeyCodeExtended(KeyCode.None);
+                GameSettings.TOGGLE_LABELS.secondary = new KeyCodeExtended(KeyCode.None);
+            }
+            SetVesselLabelsValue(false);
 
 
-			//Highlighters
-			if (!HasCachedHighlightInFlightSetting)
-			{
-				HasCachedHighlightInFlightSetting = true;
-				CachedHighlightInFlightSetting = GameSettings.INFLIGHT_HIGHLIGHT;
-			}
-			GameSettings.INFLIGHT_HIGHLIGHT = false;
+            //Highlighters
+            if (!HasCachedHighlightInFlightSetting)
+            {
+                HasCachedHighlightInFlightSetting = true;
+                CachedHighlightInFlightSetting = GameSettings.INFLIGHT_HIGHLIGHT;
+            }
+            GameSettings.INFLIGHT_HIGHLIGHT = false;
 
 
             //Unsure of this purpose at the moment
@@ -535,25 +524,27 @@ namespace ProbeControlRoom
 
             ProbeControlRoomUtils.Logger.debug("startIVA() - DONE");
 
-			//GUI may not be started yet.
-			if (toolbarControl != null) {
+            //GUI may not be started yet.
+            if (toolbarControl != null)
+            {
                 //Change app launcher button icon
-                toolbarControl.SetTexture (IconDeactivate, disabledTexture);
-			}
+                toolbarControl.SetTexture(IconActivate, enabledTexture);
+            }
 
-			if (hassavedlookangles && field_set_internalcamera_currentPitch != null && field_set_internalcamera_currentRot != null && field_set_internalcamera_currentZoom != null) {
-				ProbeControlRoomUtils.Logger.debug(string.Format("startIVA() - Restoring pitch and rot. {0}, {1}", savedpitch, savedrot));
+            if (hassavedlookangles && field_set_internalcamera_currentPitch != null && field_set_internalcamera_currentRot != null && field_set_internalcamera_currentZoom != null)
+            {
+                ProbeControlRoomUtils.Logger.debug(string.Format("startIVA() - Restoring pitch and rot. {0}, {1}", savedpitch, savedrot));
 
-				field_set_internalcamera_currentPitch(InternalCamera.Instance, savedpitch);
-				field_set_internalcamera_currentRot(InternalCamera.Instance, savedrot);
-				field_set_internalcamera_currentZoom(InternalCamera.Instance, savedzoom);
-				InternalCamera.Instance.Update ();
-			}
+                field_set_internalcamera_currentPitch(InternalCamera.Instance, savedpitch);
+                field_set_internalcamera_currentRot(InternalCamera.Instance, savedrot);
+                field_set_internalcamera_currentZoom(InternalCamera.Instance, savedzoom);
+                InternalCamera.Instance.Update();
+            }
 
-			//Disable sun effects inside of IVA
-			SetSun(false);
+            //Disable sun effects inside of IVA
+            SetSun(false);
 
-			ProbeControlRoomUtils.Logger.debug("startIVA() - REALLY DONE");
+            ProbeControlRoomUtils.Logger.debug("startIVA() - REALLY DONE");
 
             isActive = true;
 
@@ -561,37 +552,38 @@ namespace ProbeControlRoom
 
         }
 
-		void ResetCameraToIVA()
-		{
-			aModule = aPart.FindModulesImplementing<ProbeControlRoomPart>()[0];
-			Transform actualTransform = aPart.internalModel.FindModelTransform(aModule.seatTransformName);
-			if (Transform.Equals(actualTransform, null))
-			{
-				ProbeControlRoomUtils.Logger.error("ResetCameraToIVA(Part) - NULL on actualTransform-seatTransformName, using fallback...");
-				actualTransform = aPart.internalModel.FindModelTransform("Seat");
-			}
-			else
-			{
-				ProbeControlRoomUtils.Logger.message("ResetCameraToIVA(Part) - Seat: " + aModule.seatTransformName.ToString());
-			}
-				
-
-			CameraManager.Instance.SetCameraInternal(aPart.internalModel, actualTransform);
+        void ResetCameraToIVA()
+        {
+            aModule = aPart.FindModulesImplementing<ProbeControlRoomPart>()[0];
+            Transform actualTransform = aPart.internalModel.FindModelTransform(aModule.seatTransformName);
+            if (Transform.Equals(actualTransform, null))
+            {
+                ProbeControlRoomUtils.Logger.error("ResetCameraToIVA(Part) - NULL on actualTransform-seatTransformName, using fallback...");
+                actualTransform = aPart.internalModel.FindModelTransform("Seat");
+            }
+            else
+            {
+                ProbeControlRoomUtils.Logger.message("ResetCameraToIVA(Part) - Seat: " + aModule.seatTransformName.ToString());
+            }
 
 
-			//Restore PCRIVA camera
-			if (hassavedlookangles && field_set_internalcamera_currentPitch != null && field_set_internalcamera_currentRot != null && field_set_internalcamera_currentZoom != null) {
-				field_set_internalcamera_currentPitch(InternalCamera.Instance, savedpitch);
-				field_set_internalcamera_currentRot(InternalCamera.Instance, savedrot);
-				field_set_internalcamera_currentZoom(InternalCamera.Instance, savedzoom);
-				InternalCamera.Instance.Update ();
-			}
+            CameraManager.Instance.SetCameraInternal(aPart.internalModel, actualTransform);
 
-			//Disable sun effects inside of IVA
-			SetSun(false);
 
-			ProbeControlRoomUtils.Logger.debug("ResetCameraToIVA - DONE");
-		}
+            //Restore PCRIVA camera
+            if (hassavedlookangles && field_set_internalcamera_currentPitch != null && field_set_internalcamera_currentRot != null && field_set_internalcamera_currentZoom != null)
+            {
+                field_set_internalcamera_currentPitch(InternalCamera.Instance, savedpitch);
+                field_set_internalcamera_currentRot(InternalCamera.Instance, savedrot);
+                field_set_internalcamera_currentZoom(InternalCamera.Instance, savedzoom);
+                InternalCamera.Instance.Update();
+            }
+
+            //Disable sun effects inside of IVA
+            SetSun(false);
+
+            ProbeControlRoomUtils.Logger.debug("ResetCameraToIVA - DONE");
+        }
 
         /// <summary>
         /// Shuts down current PCR IVA
@@ -601,12 +593,12 @@ namespace ProbeControlRoom
 
             ProbeControlRoomUtils.Logger.debug("stopIVA()");
 
-			//Enable sun effects inside of IVA
-			SetSun(true);
+            //Enable sun effects inside of IVA
+            SetSun(true);
 
             isActive = false;
-			needCamReset = false;
-            
+            needCamReset = false;
+
             //Restore settings to levels prior to entering IVA
             if (ProbeControlRoomSettings.Instance.DisableSounds)
             {
@@ -625,25 +617,25 @@ namespace ProbeControlRoom
                 GameSettings.CAMERA_FX_EXTERNAL = cameraFXExternalBackup;
             }
 
-			//Restore vessel labels capability.
-			if (HasCachedVesselLabelsSetting)
-			{
-				HasCachedVesselLabelsSetting = false;
-				SetVesselLabelsValue (CachedVesselLabelsSetting);
-			}
-			if (VesselLabelKeyDisabled)
-			{
-				VesselLabelKeyDisabled = false;
-				GameSettings.TOGGLE_LABELS.primary = CachedLabelPrimaryKey;
-				GameSettings.TOGGLE_LABELS.secondary = CachedLabelSecondaryKey;
-			}
+            //Restore vessel labels capability.
+            if (HasCachedVesselLabelsSetting)
+            {
+                HasCachedVesselLabelsSetting = false;
+                SetVesselLabelsValue(CachedVesselLabelsSetting);
+            }
+            if (VesselLabelKeyDisabled)
+            {
+                VesselLabelKeyDisabled = false;
+                GameSettings.TOGGLE_LABELS.primary = CachedLabelPrimaryKey;
+                GameSettings.TOGGLE_LABELS.secondary = CachedLabelSecondaryKey;
+            }
 
-			//Restore part highlighter
-			if (HasCachedHighlightInFlightSetting)
-			{
-				HasCachedHighlightInFlightSetting = false;
-				GameSettings.INFLIGHT_HIGHLIGHT = CachedHighlightInFlightSetting;
-			}
+            //Restore part highlighter
+            if (HasCachedHighlightInFlightSetting)
+            {
+                HasCachedHighlightInFlightSetting = false;
+                GameSettings.INFLIGHT_HIGHLIGHT = CachedHighlightInFlightSetting;
+            }
 
             //Switch back to normal cameras
             CameraManager.ICameras_DeactivateAll();
@@ -655,42 +647,43 @@ namespace ProbeControlRoom
             ProbeControlRoomUtils.Logger.debug("stopIVA() - CHECKMARK");
 
             //Change app launcher button
-            toolbarControl.SetTexture(IconActivate, enabledTexture);
+            toolbarControl.SetTexture(IconDeactivate, disabledTexture);
         }
 
-		public void Update()
-		{
-			if (HighLogic.LoadedScene == GameScenes.FLIGHT
-			    && isActive
-			    && !canStockIVA
-			    && CameraManager.Instance.currentCameraMode != CameraManager.CameraMode.IVA)
-			{
-				//Stuff to do early while running
+        public void Update()
+        {
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT
+                && isActive
+                && !canStockIVA
+                && CameraManager.Instance.currentCameraMode != CameraManager.CameraMode.IVA)
+            {
+                //Stuff to do early while running
 
-				//Kill vessel labels
-				SetVesselLabelsValue (false);
+                //Kill vessel labels
+                SetVesselLabelsValue(false);
 
-				//Save where the camera was looking.
-				//We have to do this here because if the part is shut down,
-				//we don't have time to get it before it is lost.
-				if (field_get_internalcamera_currentPitch != null && field_get_internalcamera_currentRot != null && field_get_internalcamera_currentZoom != null) {
-					float newpitch = field_get_internalcamera_currentPitch(InternalCamera.Instance);
-					float newrot = field_get_internalcamera_currentRot(InternalCamera.Instance);
-					float newzoom = field_get_internalcamera_currentZoom(InternalCamera.Instance);
+                //Save where the camera was looking.
+                //We have to do this here because if the part is shut down,
+                //we don't have time to get it before it is lost.
+                if (field_get_internalcamera_currentPitch != null && field_get_internalcamera_currentRot != null && field_get_internalcamera_currentZoom != null)
+                {
+                    float newpitch = field_get_internalcamera_currentPitch(InternalCamera.Instance);
+                    float newrot = field_get_internalcamera_currentRot(InternalCamera.Instance);
+                    float newzoom = field_get_internalcamera_currentZoom(InternalCamera.Instance);
 
-					//Note that if the PCRIVA got broken, these are zero.
-					if (newpitch != 0f || newrot != 0f)
-					{
-						hassavedlookangles = true;
-						savedpitch = newpitch;
-						savedrot = newrot;
-						savedzoom = newzoom;
-					}
-				}
+                    //Note that if the PCRIVA got broken, these are zero.
+                    if (newpitch != 0f || newrot != 0f)
+                    {
+                        hassavedlookangles = true;
+                        savedpitch = newpitch;
+                        savedrot = newrot;
+                        savedzoom = newzoom;
+                    }
+                }
 
 
-			}
-		}
+            }
+        }
 
         /// <summary>
         /// Check for invalid PCR states and controls inputs for acivation/deactivation
@@ -701,74 +694,86 @@ namespace ProbeControlRoom
             var scene = HighLogic.LoadedScene;
             if (scene == GameScenes.FLIGHT)
             {
-				if (maybecanstockiva && HighLogic.CurrentGame.Parameters.Flight.CanIVA) {
-					ProbeControlRoomUtils.Logger.message("OnUpdate() - Maybe we can IVA, rescan");
-					refreshVesselRooms ();
-				}
+                if (maybecanstockiva && HighLogic.CurrentGame.Parameters.Flight.CanIVA)
+                {
+                    ProbeControlRoomUtils.Logger.message("OnUpdate() - Maybe we can IVA, rescan");
+                    refreshVesselRooms();
+                }
 
                 if (isActive)
                 {
-					//***Start in flight and active***
-					
+                    //***Start in flight and active***
+
                     //If IVA Camera is active, there is a valid and operational stock IVA and PCR needs to be shutdown
-					if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA
-					|| canStockIVA) {
-						
-						ProbeControlRoomUtils.Logger.message ("OnUpdate() - real IVA detected, ending...");
-						stopIVA ();
-						/*
+                    if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA
+                    || canStockIVA)
+                    {
+
+                        ProbeControlRoomUtils.Logger.message("OnUpdate() - real IVA detected, ending...");
+                        stopIVA();
+                        /*
 						if (ProbeControlRoomSettings.Instance.ForcePCROnly) {
 							ProbeControlRoomUtils.Logger.message ("OnUpdate() - real IVA detected, ending... KILLED - ForcePCROnly Enabled.");
 							startIVA ();
 						}
 						*/
 
-					} else {
+                    }
+                    else
+                    {
 
-						//***Start in flight, active, and should be active***
+                        //***Start in flight, active, and should be active***
 
-						if (aPart == null || aPart.internalModel == null)
-							needCamReset = true;
-						else {
-							if (cachedrenderers == null)
-								cachedrenderers = aPart.internalModel.GetComponentsInChildren<MeshRenderer> ();
-							if (cachedrenderers.Length > 0 && !cachedrenderers [0].enabled) {
-								ProbeControlRoomUtils.Logger.message ("Need cam reset because renderer off.");
-								needCamReset = true;
-							}
-						}
+                        if (aPart == null || aPart.internalModel == null)
+                            needCamReset = true;
+                        else
+                        {
+                            if (cachedrenderers == null)
+                                cachedrenderers = aPart.internalModel.GetComponentsInChildren<MeshRenderer>();
+                            if (cachedrenderers.Length > 0 && !cachedrenderers[0].enabled)
+                            {
+                                ProbeControlRoomUtils.Logger.message("Need cam reset because renderer off.");
+                                needCamReset = true;
+                            }
+                        }
 
-						if ((needCamReset || FlightCamera.fetch.updateActive)
-						   && (!MapView.MapIsEnabled && FlightGlobals.ActiveVessel != null && !FlightGlobals.ActiveVessel.packed)) {
-							ResetCameraToIVA ();
-							needCamReset = false;
-							ProbeControlRoomUtils.Logger.message ("Done with needCamReset.");
-						}
+                        if ((needCamReset || FlightCamera.fetch.updateActive)
+                           && (!MapView.MapIsEnabled && FlightGlobals.ActiveVessel != null && !FlightGlobals.ActiveVessel.packed))
+                        {
+                            ResetCameraToIVA();
+                            needCamReset = false;
+                            ProbeControlRoomUtils.Logger.message("Done with needCamReset.");
+                        }
 
-						//Check for imput to stop IVA
-						if (!MapView.MapIsEnabled && GameSettings.CAMERA_MODE.GetKeyDown(false)) {
-							ProbeControlRoomUtils.Logger.message ("OnUpdate() - CAMERA_MODE.key seen, stopIVA()");
-							if (ProbeControlRoomSettings.Instance.ForcePCROnly) {
-								ProbeControlRoomUtils.Logger.message ("OnUpdate() - CAMERA_MODE.key seen, stopIVA() KILLED - ForcePCROnly Enabled.");
-							} else {
-								stopIVA ();
-							}
-						}
+                        //Check for imput to stop IVA
+                        if (!MapView.MapIsEnabled && GameSettings.CAMERA_MODE.GetKeyDown(false))
+                        {
+                            ProbeControlRoomUtils.Logger.message("OnUpdate() - CAMERA_MODE.key seen, stopIVA()");
+                            if (ProbeControlRoomSettings.Instance.ForcePCROnly)
+                            {
+                                ProbeControlRoomUtils.Logger.message("OnUpdate() - CAMERA_MODE.key seen, stopIVA() KILLED - ForcePCROnly Enabled.");
+                            }
+                            else
+                            {
+                                stopIVA();
+                            }
+                        }
 
-						//***End in flight, active, and should be active***
-					}
+                        //***End in flight, active, and should be active***
+                    }
 
-					//***End in flight and active***
+                    //***End in flight and active***
                 }
                 else
                 {
                     // Listen for keyboard input to start PCR unless a valid IVA exists.  PCR can still be started via AppLauncher or toolbar
-					if (!maybecanstockiva && !canStockIVA && canPCRIVA && !MapView.MapIsEnabled && 
-						(ProbeControlRoomSettings.Instance.ForcePCROnly || GameSettings.CAMERA_MODE.GetKeyDown(false) )
-						) {
-						ProbeControlRoomUtils.Logger.message ("OnUpdate() - CAMERA_MODE.key seen, startIVA()");
-						startIVA ();
-					}
+                    if (!maybecanstockiva && !canStockIVA && canPCRIVA && !MapView.MapIsEnabled &&
+                        (ProbeControlRoomSettings.Instance.ForcePCROnly || GameSettings.CAMERA_MODE.GetKeyDown(false))
+                        )
+                    {
+                        ProbeControlRoomUtils.Logger.message("OnUpdate() - CAMERA_MODE.key seen, startIVA()");
+                        startIVA();
+                    }
                 }
             }
             else
@@ -789,7 +794,7 @@ namespace ProbeControlRoom
         private void OnVesselChange(Vessel v)
         {
             ProbeControlRoomUtils.Logger.message("OnVesselChange(Vessel)");
-			aPart = null;
+            aPart = null;
             vesselModified();
         }
 
@@ -809,30 +814,36 @@ namespace ProbeControlRoom
         private void vesselModified()
         {
             ProbeControlRoomUtils.Logger.message("vesselModified()");
-			if (FlightGlobals.ActiveVessel == null) {
-				ProbeControlRoomUtils.Logger.message("vesselModified() - no active vessel, returning");
-				stopIVA ();
-				return;
-			}
+            if (FlightGlobals.ActiveVessel == null)
+            {
+                ProbeControlRoomUtils.Logger.message("vesselModified() - no active vessel, returning");
+                stopIVA();
+                return;
+            }
             Part oldPart = aPart;
             refreshVesselRooms();
             //Only stop the IVA if the part is missing, restart it otherwise
-			if (isActive) {
-				if (!canPCRIVA) {
-					ProbeControlRoomUtils.Logger.message ("vesselModified() - Can no longer use PCR on this vessel");
-					stopIVA ();
-				}
+            if (isActive)
+            {
+                if (!canPCRIVA)
+                {
+                    ProbeControlRoomUtils.Logger.message("vesselModified() - Can no longer use PCR on this vessel");
+                    stopIVA();
+                }
 
-				if (aPart != oldPart) {
-					ProbeControlRoomUtils.Logger.message ("vesselModified() - Have to change part.");
-					//Can still PCR IVA but the part has changed, restart
+                if (aPart != oldPart)
+                {
+                    ProbeControlRoomUtils.Logger.message("vesselModified() - Have to change part.");
+                    //Can still PCR IVA but the part has changed, restart
 
-					stopIVA ();
-					startIVA ();
-				}
-			} else if (canPCRIVA && !canStockIVA && !MapView.MapIsEnabled && ProbeControlRoomSettings.Instance.ForcePCROnly) {
-				startIVA ();
-			}
+                    stopIVA();
+                    startIVA();
+                }
+            }
+            else if (canPCRIVA && !canStockIVA && !MapView.MapIsEnabled && ProbeControlRoomSettings.Instance.ForcePCROnly)
+            {
+                startIVA();
+            }
         }
 
         /// <summary>
@@ -848,68 +859,84 @@ namespace ProbeControlRoom
             if (vessel == null)
             {
                 canStockIVA = false;
-				maybecanstockiva = false;
+                maybecanstockiva = false;
                 aPart = null;
-				cachedrenderers = null;
+                cachedrenderers = null;
                 aModule = null;
                 ProbeControlRoomUtils.Logger.error("refreshVesselRooms() - ERROR: FlightGlobals.activeVessel is NULL");
                 return;
             }
 
-			canStockIVA = false;
-			maybecanstockiva = false;
-			for (int i = 0; i < vessel.parts.Count; i++) {
-				Part p = vessel.parts [i];
-				ProbeControlRoomPart room = p.GetComponent<ProbeControlRoomPart> ();
+            canStockIVA = false;
+            maybecanstockiva = false;
+            for (int i = 0; i < vessel.parts.Count; i++)
+            {
+                Part p = vessel.parts[i];
+                ProbeControlRoomPart room = p.GetComponent<ProbeControlRoomPart>();
 
-				//Are we not loaded yet?
-				if ((!HighLogic.CurrentGame.Parameters.Flight.CanIVA || vessel.packed) && p.protoModuleCrew.Count > 0) {
-					ProbeControlRoomUtils.Logger.message ("refreshVesselRooms() - Maybe we can IVA!");
-					maybecanstockiva = true;
-					canStockIVA = true;
-				} else if (HighLogic.CurrentGame.Parameters.Flight.CanIVA && p.protoModuleCrew.Count > 0 && p.internalModel != null) {
-					ProbeControlRoomUtils.Logger.message ("refreshVesselRooms() - Stock IVA possible. Part: " + p.ToString ());
-					canStockIVA = true;
-				}
-			}
+                //Are we not loaded yet?
+                if ((!HighLogic.CurrentGame.Parameters.Flight.CanIVA || vessel.packed) && p.protoModuleCrew.Count > 0)
+                {
+                    ProbeControlRoomUtils.Logger.message("refreshVesselRooms() - Maybe we can IVA!");
+                    maybecanstockiva = true;
+                    canStockIVA = true;
+                }
+                else if (HighLogic.CurrentGame.Parameters.Flight.CanIVA && p.protoModuleCrew.Count > 0 && p.internalModel != null)
+                {
+                    ProbeControlRoomUtils.Logger.message("refreshVesselRooms() - Stock IVA possible. Part: " + p.ToString());
+                    canStockIVA = true;
+                }
+            }
 
             // If our current vessel still has the old PCR part, keep it active
-			if (aPart != null && vessel.parts.Contains (aPart)) {
+            if (aPart != null && vessel.parts.Contains(aPart))
+            {
 
-				// If stock IVA is available then we can't have our model around, it might
-				// interfere with stock IVA clicks.
-				if (canStockIVA) {
-					ProbeControlRoomUtils.Logger.debug ("refreshVesselRooms() - Destroying existing PCR part due to stock IVA.");
-					canPCRIVA = false;
-					if (aPart.internalModel != null) {
-						aPart.internalModel.gameObject.DestroyGameObject ();
-						aPart.internalModel = null;
-					}
-					aPart = null;
-				} else {
-					canPCRIVA = true;
-					ProbeControlRoomUtils.Logger.debug ("refreshVesselRooms() - Old part still there, cleaning up extra rooms and returning");
-					//Our old part is still there and active. Clean up extras as needed and return
-					for (int i = 0; i < vessel.parts.Count; i++) {
-						Part p = vessel.parts [i];
-						if (p.GetComponent<ProbeControlRoomPart> () != null && aPart != p && p.protoModuleCrew.Count == 0 && p.internalModel != null) {
-							ProbeControlRoomUtils.Logger.debug ("refreshRooms() Found and destroying old PCR in " + p.ToString ());
-							p.internalModel.gameObject.DestroyGameObject ();
-							p.internalModel = null;
-						}
-					}
-				}
-				return;
-			} else {
-				aPart = null;
-				ProbeControlRoomUtils.Logger.debug ("refreshVesselRooms() - Old part no longer in vessel.");
-			}
+                // If stock IVA is available then we can't have our model around, it might
+                // interfere with stock IVA clicks.
+                if (canStockIVA)
+                {
+                    ProbeControlRoomUtils.Logger.debug("refreshVesselRooms() - Destroying existing PCR part due to stock IVA.");
+                    canPCRIVA = false;
+                    if (aPart.internalModel != null)
+                    {
+                        aPart.internalModel.gameObject.DestroyGameObject();
+                        aPart.internalModel = null;
+                    }
+                    aPart = null;
+                }
+                else
+                {
+                    canPCRIVA = true;
+                    ProbeControlRoomUtils.Logger.debug("refreshVesselRooms() - Old part still there, cleaning up extra rooms and returning");
+                    //Our old part is still there and active. Clean up extras as needed and return
+                    for (int i = 0; i < vessel.parts.Count; i++)
+                    {
+                        Part p = vessel.parts[i];
+                        if (p.GetComponent<ProbeControlRoomPart>() != null && aPart != p && p.protoModuleCrew.Count == 0 && p.internalModel != null)
+                        {
+                            ProbeControlRoomUtils.Logger.debug("refreshRooms() Found and destroying old PCR in " + p.ToString());
+                            p.internalModel.gameObject.DestroyGameObject();
+                            p.internalModel = null;
+                        }
+                    }
+                }
+                return;
+            }
+            else
+            {
+                aPart = null;
+                ProbeControlRoomUtils.Logger.debug("refreshVesselRooms() - Old part no longer in vessel.");
+            }
 
-			//Do not create PCR when stock IVA available.
-			if (canStockIVA) {
-				canPCRIVA = false;
-				return;
-			}
+            //Do not create PCR when stock IVA available.
+            if (canStockIVA)
+            {
+                ProbeControlRoomUtils.Logger.debug("refreshVesselRooms() - stock IVA available in vessel.");
+
+                canPCRIVA = false;
+                return;
+            }
 
             //No current active PCR found, time to create a new one
             canPCRIVA = false;
@@ -962,13 +989,13 @@ namespace ProbeControlRoom
 
 
                 //Select primary part for use and verify it's initialized
-				ProbeControlRoomUtils.Logger.message("refreshVesselRooms() - Initializing room in " + rooms[0].ToString());
+                ProbeControlRoomUtils.Logger.message("refreshVesselRooms() - Initializing room in " + rooms[0].ToString());
                 aPart = rooms[0];
-				cachedrenderers = null;
+                cachedrenderers = null;
                 aPart.internalModel.Initialize(aPart);
                 aPart.internalModel.SetVisible(false);
 
-				ProbeControlRoomUtils.Logger.message ("refreshVesselRooms() - C");
+                ProbeControlRoomUtils.Logger.message("refreshVesselRooms() - C");
 
                 //Remove Excess internal models
                 if (rooms.Count > 1)
@@ -984,11 +1011,11 @@ namespace ProbeControlRoom
                 rooms.Clear();
                 rooms = null;
             }
-            else if(pcrNoModel.Count > 0)
+            else if (pcrNoModel.Count > 0)
             {
                 // No parts with an available internal model were found, attempting to create one
                 aPart = pcrNoModel[0];
-				cachedrenderers = null;
+                cachedrenderers = null;
                 aPart.CreateInternalModel();
                 ProbeControlRoomUtils.Logger.debug("refreshVesselRooms() - No active room with a model found, creating now in " + aPart.ToString());
                 if (aPart.internalModel == null)
@@ -1002,12 +1029,12 @@ namespace ProbeControlRoom
                 canPCRIVA = true;
             }
 
-			if (pcrNoModel != null)
-				pcrNoModel.Clear ();
+            if (pcrNoModel != null)
+                pcrNoModel.Clear();
             pcrNoModel = null;
 
             // Set app launcher availability based on current layout.
-            if(AppLauncher)
+            if (AppLauncher)
             {
                 if (canPCRIVA)
                 {
