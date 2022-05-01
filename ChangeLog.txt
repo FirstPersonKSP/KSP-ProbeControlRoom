@@ -1,5 +1,6 @@
 ChangeLog
 
+
 1.2.2.8
 	Removed toolbar button when leaving flight scene
 
@@ -22,3 +23,7 @@ ChangeLog
 
 1.2.4.1
 	Changed name of DLL for CKAN compatibility
+
+1.2.4.2
+	Thanks to forum user @HebaruSan for this:
+		Fixed some minor syntax error in cfg files
