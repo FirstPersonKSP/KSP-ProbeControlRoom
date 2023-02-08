@@ -40,7 +40,7 @@ namespace ProbeControlRoom
 
         //Current PCR module
         private ProbeControlRoomPart aModule;
-        private Part aPart => aModule.part;
+        private Part aPart => aModule?.part;
 
         //Storage for original game settings
         float shipVolumeBackup = GameSettings.SHIP_VOLUME;
