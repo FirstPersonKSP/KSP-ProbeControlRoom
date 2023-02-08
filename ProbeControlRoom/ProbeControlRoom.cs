@@ -360,11 +360,11 @@ namespace ProbeControlRoom
                 
                 aPart.internalModel.Initialize(aPart);
                 aPart.internalModel.SpawnCrew();
-                aPart.internalModel.SetVisible(visible: false);
             }
             else
             {
                 aPart.internalModel.gameObject.SetActive(true);
+                aPart.internalModel.SetVisible(true);
             }
 
             // remove any PCMs that were added
