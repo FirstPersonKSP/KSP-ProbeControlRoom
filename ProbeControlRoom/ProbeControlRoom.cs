@@ -486,6 +486,10 @@ namespace ProbeControlRoom
             }
 
             CameraManager.Instance.SetCameraIVA(aPart.internalModel.seats[0].kerbalRef, true);
+
+            // stock bug: SetCameraIVA turns off the head renderers and then calls InternalModel.SetVisible, which enables all renderers in the IVA and turns the heads back on
+            CameraManager.Instance.IVACameraActiveKerbal.IVAEnable(true);
+
             isActive = true;
         }
 
@@ -591,6 +595,9 @@ namespace ProbeControlRoom
                     int currentIndex = aPart.internalModel.seats.FindIndex(seat => seat.kerbalRef == CameraManager.Instance.IVACameraActiveKerbal);
                     int nextIndex = (currentIndex + 1) % aPart.internalModel.seats.Count;
                     CameraManager.Instance.SetCameraIVA(aPart.internalModel.seats[nextIndex].kerbalRef, true);
+
+                    // stock bug: SetCameraIVA turns off the head renderers and then calls InternalModel.SetVisible, which enables all renderers in the IVA and turns the heads back on
+                    CameraManager.Instance.IVACameraActiveKerbal.IVAEnable(true);
                 }
             }
         }
