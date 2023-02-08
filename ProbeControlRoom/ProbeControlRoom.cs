@@ -421,7 +421,6 @@ namespace ProbeControlRoom
                 }
                 SetVesselLabelsValue(false);
 
-
                 //Highlighters
                 if (!HasCachedHighlightInFlightSetting)
                 {
@@ -429,6 +428,9 @@ namespace ProbeControlRoom
                     CachedHighlightInFlightSetting = GameSettings.INFLIGHT_HIGHLIGHT;
                 }
                 GameSettings.INFLIGHT_HIGHLIGHT = false;
+
+                // lock out camera modes (V and C buttons)
+                InputLockManager.SetControlLock(ControlTypes.CAMERAMODES, "ProbeControlRoom");
             }
 
             if (UIPartActionController.Instance != null)
@@ -549,6 +551,9 @@ namespace ProbeControlRoom
                 GameSettings.INFLIGHT_HIGHLIGHT = CachedHighlightInFlightSetting;
             }
 
+            // unlock camera modes (V and C buttons)
+            InputLockManager.RemoveControlLock("ProbeControlRoom");
+
             //Switch back to normal cameras
             if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)
             {
@@ -598,6 +603,19 @@ namespace ProbeControlRoom
 
                     // stock bug: SetCameraIVA turns off the head renderers and then calls InternalModel.SetVisible, which enables all renderers in the IVA and turns the heads back on
                     CameraManager.Instance.IVACameraActiveKerbal.IVAEnable(true);
+                }
+            }
+            else
+            {
+                // if pressing the camera mode (C) button and we either failed to enter IVA mode or just left it, then try to start PCR mode
+                if (GameSettings.CAMERA_MODE.GetKeyDown() && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight)
+                {
+                    // If we were previously in IVA mode and pressing C switched to Flight, the portrait gallery will have spun up a coroutine to refresh itself
+                    // which interferes with which internal spaces are shown or hidden.  Stop it from doing that.
+                    if (startIVA())
+                    {
+                        KerbalPortraitGallery.Instance.StopAllCoroutines();
+                    }
                 }
             }
         }
