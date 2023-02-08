@@ -590,6 +590,7 @@ namespace ProbeControlRoom
                     }
                     else
                     {
+                        // TODO: this triggers when trying to "return to seat" in FreeIva - how to avoid?
                         stopIVA();
                     }
                 }
@@ -608,7 +609,7 @@ namespace ProbeControlRoom
             else
             {
                 // if pressing the camera mode (C) button and we either failed to enter IVA mode or just left it, then try to start PCR mode
-                if (GameSettings.CAMERA_MODE.GetKeyDown() && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight)
+                if (!GameSettings.MODIFIER_KEY.GetKey() && GameSettings.CAMERA_MODE.GetKeyDown() && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight)
                 {
                     // If we were previously in IVA mode and pressing C switched to Flight, the portrait gallery will have spun up a coroutine to refresh itself
                     // which interferes with which internal spaces are shown or hidden.  Stop it from doing that.
