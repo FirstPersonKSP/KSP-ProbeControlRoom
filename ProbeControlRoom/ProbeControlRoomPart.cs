@@ -4,9 +4,6 @@ namespace ProbeControlRoom
 {
 	public class ProbeControlRoomPart : PartModule
 	{
-		[KSPField]
-		public string seatTransformName = "Seat";
-
 		[KSPEvent(guiActive = true, guiName = "IVA ProbeControl")]
 		public void EventActivateProbeControlRoomPart()
 		{
