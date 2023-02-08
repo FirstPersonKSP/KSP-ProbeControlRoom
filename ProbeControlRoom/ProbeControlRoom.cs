@@ -127,6 +127,8 @@ namespace ProbeControlRoom
             GameEvents.onGUIApplicationLauncherDestroyed.Add(OnGUIAppLauncherDestroyed);
             GameEvents.onGameSceneSwitchRequested.Add(OnGameSceneSwitchRequested);
 
+            MapView.OnExitMapView += OnExitMapView;
+
             //If Manely mode is set true, force straight into IVA
             if (ProbeControlRoomSettings.Instance.ForcePCROnly)
             {
@@ -135,7 +137,16 @@ namespace ProbeControlRoom
             }
         }
 
-        void OnGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> scn)
+        // when the map view exits, it tries to return to the previous camera mode (IVA).  But that fails, because the vessel has no crew.  So we need to manually restart the PCR mode.
+		private void OnExitMapView()
+		{
+			if (isActive)
+			{
+                startIVA();
+			}
+		}
+
+		void OnGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> scn)
         {
             if (isActive)
                 stopIVA();
@@ -239,6 +250,8 @@ namespace ProbeControlRoom
             onGUIApplicationLauncherReady();
             GameEvents.onGUIApplicationLauncherDestroyed.Remove(OnGUIAppLauncherDestroyed);
             GameEvents.onGameSceneSwitchRequested.Remove(OnGameSceneSwitchRequested);
+            
+            MapView.OnExitMapView -= OnExitMapView;
 
             if (toolbarControl != null)
             {
@@ -313,7 +326,6 @@ namespace ProbeControlRoom
                 return false;
             }
             ProbeControlRoomUtils.Logger.debug("startIVA()");
-            Transform actualTransform;
 
             if (FlightGlobals.ActiveVessel.packed)
             {
@@ -363,58 +375,61 @@ namespace ProbeControlRoom
 
             ProbeControlRoomUtils.Logger.debug("startIVA() - fire up IVA");
 
-
-            //disable sound
-            shipVolumeBackup = GameSettings.SHIP_VOLUME;
-            ambianceVolumeBackup = GameSettings.AMBIENCE_VOLUME;
-            if (ProbeControlRoomSettings.Instance.DisableSounds)
+            // store settings so they can be restored later
+            if (!isActive)
             {
-                ProbeControlRoomUtils.Logger.message("startIVA() - DisableSounds");
-                GameSettings.SHIP_VOLUME = 0f;
-                GameSettings.AMBIENCE_VOLUME = 0;
-                GameSettings.MUSIC_VOLUME = 0;
-                GameSettings.UI_VOLUME = 0;
-                GameSettings.VOICE_VOLUME = 0;
-            }
+                //disable sound
+                shipVolumeBackup = GameSettings.SHIP_VOLUME;
+                ambianceVolumeBackup = GameSettings.AMBIENCE_VOLUME;
+                if (ProbeControlRoomSettings.Instance.DisableSounds)
+                {
+                    ProbeControlRoomUtils.Logger.message("startIVA() - DisableSounds");
+                    GameSettings.SHIP_VOLUME = 0f;
+                    GameSettings.AMBIENCE_VOLUME = 0;
+                    GameSettings.MUSIC_VOLUME = 0;
+                    GameSettings.UI_VOLUME = 0;
+                    GameSettings.VOICE_VOLUME = 0;
+                }
 
-            //disable camera wobble
-            cameraWobbleBackup = GameSettings.FLT_CAMERA_WOBBLE;
-            cameraFXInternalBackup = GameSettings.CAMERA_FX_INTERNAL;
-            cameraFXExternalBackup = GameSettings.CAMERA_FX_EXTERNAL;
+                //disable camera wobble
+                cameraWobbleBackup = GameSettings.FLT_CAMERA_WOBBLE;
+                cameraFXInternalBackup = GameSettings.CAMERA_FX_INTERNAL;
+                cameraFXExternalBackup = GameSettings.CAMERA_FX_EXTERNAL;
 
-            if (ProbeControlRoomSettings.Instance.DisableWobble)
-            {
-                ProbeControlRoomUtils.Logger.message("startIVA() - DisableWobble");
-                GameSettings.FLT_CAMERA_WOBBLE = 0;
-                GameSettings.CAMERA_FX_INTERNAL = 0;
-                GameSettings.CAMERA_FX_EXTERNAL = 0;
-            }
-            // TODO: create cfg file with cached vars, on crash to be restored
+                if (ProbeControlRoomSettings.Instance.DisableWobble)
+                {
+                    ProbeControlRoomUtils.Logger.message("startIVA() - DisableWobble");
+                    GameSettings.FLT_CAMERA_WOBBLE = 0;
+                    GameSettings.CAMERA_FX_INTERNAL = 0;
+                    GameSettings.CAMERA_FX_EXTERNAL = 0;
+                }
+                // TODO: create cfg file with cached vars, on crash to be restored
 
-            //Prevent user from turning on vessel labels
-            if (!HasCachedVesselLabelsSetting)
-            {
-                HasCachedVesselLabelsSetting = true;
-                CachedVesselLabelsSetting = GameSettings.FLT_VESSEL_LABELS;
-            }
-            if (!VesselLabelKeyDisabled)
-            {
-                VesselLabelKeyDisabled = true;
-                CachedLabelPrimaryKey = GameSettings.TOGGLE_LABELS.primary;
-                CachedLabelSecondaryKey = GameSettings.TOGGLE_LABELS.secondary;
-                GameSettings.TOGGLE_LABELS.primary = new KeyCodeExtended(KeyCode.None);
-                GameSettings.TOGGLE_LABELS.secondary = new KeyCodeExtended(KeyCode.None);
-            }
-            SetVesselLabelsValue(false);
+                //Prevent user from turning on vessel labels
+                if (!HasCachedVesselLabelsSetting)
+                {
+                    HasCachedVesselLabelsSetting = true;
+                    CachedVesselLabelsSetting = GameSettings.FLT_VESSEL_LABELS;
+                }
+                if (!VesselLabelKeyDisabled)
+                {
+                    VesselLabelKeyDisabled = true;
+                    CachedLabelPrimaryKey = GameSettings.TOGGLE_LABELS.primary;
+                    CachedLabelSecondaryKey = GameSettings.TOGGLE_LABELS.secondary;
+                    GameSettings.TOGGLE_LABELS.primary = new KeyCodeExtended(KeyCode.None);
+                    GameSettings.TOGGLE_LABELS.secondary = new KeyCodeExtended(KeyCode.None);
+                }
+                SetVesselLabelsValue(false);
 
 
-            //Highlighters
-            if (!HasCachedHighlightInFlightSetting)
-            {
-                HasCachedHighlightInFlightSetting = true;
-                CachedHighlightInFlightSetting = GameSettings.INFLIGHT_HIGHLIGHT;
+                //Highlighters
+                if (!HasCachedHighlightInFlightSetting)
+                {
+                    HasCachedHighlightInFlightSetting = true;
+                    CachedHighlightInFlightSetting = GameSettings.INFLIGHT_HIGHLIGHT;
+                }
+                GameSettings.INFLIGHT_HIGHLIGHT = false;
             }
-            GameSettings.INFLIGHT_HIGHLIGHT = false;
 
             if (UIPartActionController.Instance != null)
                 UIPartActionController.Instance.Deactivate();
@@ -531,8 +546,10 @@ namespace ProbeControlRoom
             }
 
             //Switch back to normal cameras
-            CameraManager.ICameras_DeactivateAll();
-            CameraManager.Instance.SetCameraFlight();
+            if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)
+            {
+                CameraManager.Instance.SetCameraFlight();
+            }
 
             if (UIPartActionController.Instance != null)
                 UIPartActionController.Instance.Activate();
@@ -550,7 +567,7 @@ namespace ProbeControlRoom
         {
             if (isActive)
             {
-                if (CameraManager.Instance.currentCameraMode != CameraManager.CameraMode.IVA)
+                if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight)
                 {
                     stopIVA();
                 }
