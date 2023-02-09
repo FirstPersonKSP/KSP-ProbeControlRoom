@@ -569,6 +569,18 @@ namespace ProbeControlRoom
             toolbarControl.SetTexture(IconDeactivate, disabledTexture);
         }
 
+        bool KerbalIsUnbuckled(Kerbal kerbal)
+        {
+            if (kerbal == null) return false;
+
+            if (kerbal.transform.parent == kerbal.protoCrewMember.seat.seatTransform) return false;
+
+            return true;
+        }
+
+        // FreeIva changes its buckled states inside Update, so we need to use the state from the end of the previous frame
+        bool kerbalWasUnbuckled;
+
         /// <summary>
         /// Check for invalid PCR states and controls inputs for acivation/deactivation
         /// </summary>
@@ -576,12 +588,14 @@ namespace ProbeControlRoom
         {
             if (isActive)
             {
+                bool canChangeCameras = !MapView.MapIsEnabled && !kerbalWasUnbuckled;
+
                 if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight)
                 {
                     stopIVA();
                 }
                 //Check for imput to stop IVA
-                else if (!MapView.MapIsEnabled && GameSettings.CAMERA_MODE.GetKeyDown(false))
+                else if (canChangeCameras && GameSettings.CAMERA_MODE.GetKeyDown(false))
                 {
                     ProbeControlRoomUtils.Logger.message("LateUpdate() - CAMERA_MODE.key seen, stopIVA()");
                     if (ProbeControlRoomSettings.Instance.ForcePCROnly)
@@ -590,12 +604,12 @@ namespace ProbeControlRoom
                     }
                     else
                     {
-                        // TODO: this triggers when trying to "return to seat" in FreeIva - how to avoid?
+
                         stopIVA();
                     }
                 }
                 // Cycle to the next kerbal
-                else if (!MapView.MapIsEnabled && GameSettings.CAMERA_NEXT.GetKeyDown(false))
+                else if (canChangeCameras && GameSettings.CAMERA_NEXT.GetKeyDown(false))
                 {
                     // the normal IVA kerbal cycling code uses the crew on the vessel, but the kerbals in the PCR are not in the vessel!
                     int currentIndex = aPart.internalModel.seats.FindIndex(seat => seat.kerbalRef == CameraManager.Instance.IVACameraActiveKerbal);
@@ -619,6 +633,8 @@ namespace ProbeControlRoom
                     }
                 }
             }
+
+            kerbalWasUnbuckled = KerbalIsUnbuckled(CameraManager.Instance.IVACameraActiveKerbal);
         }
 
         /// <summary>
