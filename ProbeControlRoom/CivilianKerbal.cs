@@ -60,7 +60,7 @@ namespace ProbeControlRoom
                     // Maybe in the future we can instantiate one of the "real" IVA kerbals, and then just swap out the model
                     kerbal = kerbalObj.AddComponent<Kerbal>();
                 }
-                catch (Exception ex) { }
+                catch (Exception) { }
                 kerbal.enabled = true;
                 kerbal.eyeTransform = new GameObject().transform;
                 kerbal.eyeTransform.SetParent(kerbalObj.transform);
