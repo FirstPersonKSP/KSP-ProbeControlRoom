@@ -12,8 +12,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		deploy.bat = deploy.bat
 		jenkins.txt = jenkins.txt
 		LICENSE.txt = LICENSE.txt
-		ProbeControlRoom.version = ProbeControlRoom.version
 		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{2D2814B6-43EB-46A4-82D6-933FDD36482F}"
+	ProjectSection(SolutionItems) = preProject
+		GameData\ProbeControlRoom\ProbeControlRoom.version = GameData\ProbeControlRoom\ProbeControlRoom.version
 	EndProjectSection
 EndProject
 Global

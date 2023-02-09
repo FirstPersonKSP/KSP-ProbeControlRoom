@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
 [assembly: AssemblyProduct ("KSP-ProbeControlRoom")]
-[assembly: AssemblyCopyright ("(c)2017 Virindi, Icedown, Tabakhase")]
+[assembly: AssemblyCopyright ("(c)2017 Virindi, Icedown, Tabakhase, (c)2023 JonnyOThan")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
