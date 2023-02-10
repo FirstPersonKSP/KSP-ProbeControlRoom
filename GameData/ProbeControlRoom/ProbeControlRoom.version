@@ -1,7 +1,7 @@
 {
   "NAME": "ProbeControlRoom",
-  "URL": "http://ksp.spacetux.net/avc/ProbeControlRoom",
-  "DOWNLOAD": "https://github.com/linuxgurugamer/KSP-ProbeControlRoom/releases",
+  "URL": "https://raw.githubusercontent.com/JonnyOThan/KSP-ProbeControlRoom/master/GameData/ProbeControlRoom/ProbeControlRoom.version",
+  "DOWNLOAD": "https://github.com/JonnyOThan/KSP-ProbeControlRoom/releases",
   "GITHUB": {
     "USERNAME": "Linuxgurugamer",
     "REPOSITORY": "KSP-ProbeControlRoom",
