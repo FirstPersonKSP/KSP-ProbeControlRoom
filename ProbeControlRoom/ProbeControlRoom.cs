@@ -240,7 +240,10 @@ namespace ProbeControlRoom
         /// </summary>
         public void OnDestroy()
         {
-            stopIVA();
+            if (isActive)
+            {
+                stopIVA();
+            }
 
             ProbeControlRoomUtils.Logger.debug("OnDestroy()");
 
@@ -555,7 +558,7 @@ namespace ProbeControlRoom
             InputLockManager.RemoveControlLock("ProbeControlRoom");
 
             //Switch back to normal cameras
-            if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)
+            if (CameraManager.Instance != null && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)
             {
                 CameraManager.Instance.SetCameraFlight();
             }
