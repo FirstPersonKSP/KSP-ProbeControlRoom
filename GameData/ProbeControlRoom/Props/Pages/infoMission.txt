@@ -5,7 +5,7 @@
   DATE                                  
     {0:KDTy:ddd:hh:mm:ss} $&$ UTSECS    
   TIME                              
-    {0:KDTy:ddd:hh:mm:ss} $&$ METSECS   
+    {0:METy:ddd:hh:mm:ss} $&$ METSECS   
                                         
   DATA                                  
     {0,-5} Mits                         $&$ SCIENCEDATA

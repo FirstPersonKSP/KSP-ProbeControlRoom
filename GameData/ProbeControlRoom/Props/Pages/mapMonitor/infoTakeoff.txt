@@ -13,7 +13,7 @@ APOAPSIS
    ALTITUDE       {0:SIP_6.1}m               $&$ APOAPSIS
    
 TIME
-   {0:KDTy:ddd:hh:mm:ss} $&$ METSECS 
+   {0:METy:ddd:hh:mm:ss} $&$ METSECS 
    
    THRST{0:;;"[[#ff5050ff]CUTOFF[#ffffffff]    ]                              "}[{0:BAR| ,10}] {0,5:P0}({1,5:P0}) $&$ THROTTLE EFFECTIVETHROTTLE
      TWR {0,5:0.00}/{1,5:0.00} $&$ TWR TWRMAX
