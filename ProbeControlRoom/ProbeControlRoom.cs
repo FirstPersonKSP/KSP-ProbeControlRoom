@@ -348,27 +348,28 @@ namespace ProbeControlRoom
                 return false;
             }
 
+
+
             // spawn the internal model
             if (aPart.internalModel == null)
             {
+                aPart.CreateInternalModel();
                 if (aPart.internalModel == null)
                 {
-                    aPart.CreateInternalModel();
-                    if (aPart.internalModel == null)
-                    {
-                        ProbeControlRoomUtils.Logger.message("startIVA() failed to spawn the internal model. DIE.");
-                        return false;
-                    }
+                    ProbeControlRoomUtils.Logger.message("startIVA() failed to spawn the internal model. DIE.");
+                    return false;
                 }
-                
                 aPart.internalModel.Initialize(aPart);
                 aPart.internalModel.SpawnCrew();
+                
             }
             else
             {
                 aPart.internalModel.gameObject.SetActive(true);
                 aPart.internalModel.SetVisible(true);
             }
+            
+
 
             // remove any PCMs that were added
             aPart.protoModuleCrew.Clear();
@@ -465,6 +466,7 @@ namespace ProbeControlRoom
             //Disable sun effects inside of IVA
             SetSun(false);
 
+           
             ProbeControlRoomUtils.Logger.debug("startIVA() - REALLY DONE");
 
             return true;
@@ -482,14 +484,14 @@ namespace ProbeControlRoom
         {
             // we have to wait a frame after spawning the kerbals to switch to IVA camera, because they need to have their Start() functions called for everything to work properly
             yield return null;
-
-            // remove the kerbals from the portrait gallery
+            // add the kerbals to the portrait gallery
+            // this is meant to fix exiting IVA when staging/undocking
             foreach (var seat in aPart.internalModel.seats)
             {
-                KerbalPortraitGallery.Instance.UnregisterActiveCrew(seat.kerbalRef);
+                KerbalPortraitGallery.Instance.RegisterActiveCrew(seat.kerbalRef);
                 x_Kerbal_running_FieldInfo.SetValue(seat.kerbalRef, false);
+                // seat.kerbalRef.SetVisibleInPortrait(false);
             }
-
             CameraManager.Instance.SetCameraIVA(aPart.internalModel.seats[0].kerbalRef, true);
 
             // stock bug: SetCameraIVA turns off the head renderers and then calls InternalModel.SetVisible, which enables all renderers in the IVA and turns the heads back on
@@ -503,9 +505,9 @@ namespace ProbeControlRoom
         /// </summary>
         public void stopIVA()
         {
-
             ProbeControlRoomUtils.Logger.debug("stopIVA()");
-
+           
+           
             //Enable sun effects inside of IVA
             SetSun(true);
 
@@ -514,8 +516,25 @@ namespace ProbeControlRoom
             if (aPart != null && aPart.internalModel != null)
             {
                 aPart.internalModel.gameObject.SetActive(false);
-            }
 
+                // Removes portraits of ProbeControlRoom kerbals
+                ProbeControlRoomUtils.Logger.debug("Stopping portrait coroutines");
+                for (int i = KerbalPortraitGallery.Instance.ActiveCrewItems.Count - 1; i >= 0; i--)
+                {
+                    var crewItem = KerbalPortraitGallery.Instance.ActiveCrewItems[i];
+                    foreach (InternalSeat seat in aPart.internalModel.seats)
+                    {
+                        if (seat.kerbalRef == crewItem.kerbal)
+                        {
+                            ProbeControlRoomUtils.Logger.debug("Removing " + crewItem.kerbal.name);
+                            // KerbalPortraitGallery.Instance.UnregisterActiveCrew does not seem to work for some reason
+                            KerbalPortraitGallery.Instance.ActiveCrewItems.RemoveAt(i);
+                        }
+                    }
+                }
+                KerbalPortraitGallery.Instance.StartReset(FlightGlobals.ActiveVessel);
+            }
+            
             //Restore settings to levels prior to entering IVA
             if (ProbeControlRoomSettings.Instance.DisableSounds)
             {
@@ -566,10 +585,15 @@ namespace ProbeControlRoom
             if (UIPartActionController.Instance != null)
                 UIPartActionController.Instance.Activate();
 
+
+
+
             ProbeControlRoomUtils.Logger.debug("stopIVA() - CHECKMARK");
+
 
             //Change app launcher button
             toolbarControl.SetTexture(IconDeactivate, disabledTexture);
+
         }
 
         bool KerbalIsUnbuckled(Kerbal kerbal)
