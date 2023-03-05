@@ -521,6 +521,7 @@ namespace ProbeControlRoom
 
             // re-enable the portrait gallery
             KerbalPortraitGallery.Instance.enabled = true;
+            KerbalPortraitGallery.Instance.StartRefresh(aPart?.vessel);
 
             //Restore settings to levels prior to entering IVA
             if (ProbeControlRoomSettings.Instance.DisableSounds)
