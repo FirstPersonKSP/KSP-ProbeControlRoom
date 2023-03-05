@@ -348,6 +348,9 @@ namespace ProbeControlRoom
                 return false;
             }
 
+            // this prevents the portrait gallery from responding to VesselWasModified callbacks
+            KerbalPortraitGallery.Instance.enabled = false;
+
             // spawn the internal model
             if (aPart.internalModel == null)
             {
@@ -515,6 +518,9 @@ namespace ProbeControlRoom
             {
                 aPart.internalModel.gameObject.SetActive(false);
             }
+
+            // re-enable the portrait gallery
+            KerbalPortraitGallery.Instance.enabled = true;
 
             //Restore settings to levels prior to entering IVA
             if (ProbeControlRoomSettings.Instance.DisableSounds)
