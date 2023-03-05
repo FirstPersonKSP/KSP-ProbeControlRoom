@@ -377,7 +377,10 @@ namespace ProbeControlRoom
             aPart.protoModuleCrew.Clear();
 
             //Make the PCR part the focused part
-            aPart.MakeReferencePart();
+            if (!GameSettings.IVA_RETAIN_CONTROL_POINT)
+            {
+                aPart.MakeReferencePart();
+            }
 
             ProbeControlRoomUtils.Logger.debug("startIVA() - fire up IVA");
 
