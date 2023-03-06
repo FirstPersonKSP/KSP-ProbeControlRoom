@@ -517,6 +517,10 @@ namespace ProbeControlRoom
 
             isActive = false;
 
+            // this re-attaches the camera to the internal space, so that it doesn't get deactivated below
+            // It's really important that the camera doesn't get deactivated, because then it can't be found again by the stock code
+            InternalCamera.Instance.DisableCamera();
+
             if (aPart != null && aPart.internalModel != null)
             {
                 aPart.internalModel.gameObject.SetActive(false);
