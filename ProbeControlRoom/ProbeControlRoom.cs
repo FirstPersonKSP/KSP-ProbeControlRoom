@@ -38,6 +38,9 @@ namespace ProbeControlRoom
         float savedrot = 0f;
         float savedzoom = 0f;
 
+        // portrait nonsense
+        static FieldInfo x_Kerbal_running_FieldInfo;
+
         //Current PCR module
         private ProbeControlRoomPart aModule;
         private Part aPart => aModule?.part;
@@ -75,26 +78,27 @@ namespace ProbeControlRoom
         string enabledTexture = "ProbeControlRoom/Icons/ProbeControlRoomToolbarEnabled";
         string disabledTexture = "ProbeControlRoom/Icons/ProbeControlRoomToolbarDisabled";
 
-        static void GetFields()
+        static ProbeControlRoom()
         {
-            if (field_get_internalcamera_currentPitch == null)
+            try
+            {
                 field_get_internalcamera_currentPitch = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldGet<float, InternalCamera>("currentPitch");
-            if (field_get_internalcamera_currentRot == null)
                 field_get_internalcamera_currentRot = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldGet<float, InternalCamera>("currentRot");
-            if (field_get_internalcamera_currentZoom == null)
                 field_get_internalcamera_currentZoom = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldGet<float, InternalCamera>("currentZoom");
 
-            if (field_set_internalcamera_currentPitch == null)
                 field_set_internalcamera_currentPitch = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldSet<float, InternalCamera>("currentPitch");
-            if (field_set_internalcamera_currentRot == null)
                 field_set_internalcamera_currentRot = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldSet<float, InternalCamera>("currentRot");
-            if (field_set_internalcamera_currentZoom == null)
                 field_set_internalcamera_currentZoom = VirindiHelpers.DynamicEmitFields.CreateDynamicInstanceFieldSet<float, InternalCamera>("currentZoom");
 
-            if (method_vessellabels_enablealllabels == null)
                 method_vessellabels_enablealllabels = typeof(VesselLabels).GetMethod("EnableAllLabels", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Instance);
-            if (method_vessellabels_disablealllabels == null)
                 method_vessellabels_disablealllabels = typeof(VesselLabels).GetMethod("DisableAllLabels", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Instance);
+
+                x_Kerbal_running_FieldInfo = typeof(Kerbal).GetField("running", BindingFlags.Instance | BindingFlags.NonPublic);
+            }
+            catch (Exception ex)
+            {
+                ProbeControlRoomUtils.Logger.debug("Exception finding fields: " + ex.ToString());
+            }
         }
 
         /// <summary>
@@ -104,17 +108,6 @@ namespace ProbeControlRoom
         {
             ProbeControlRoomUtils.Logger.debug("Start()");
             Instance = this;
-
-
-            try
-            {
-                GetFields();
-            }
-            catch (Exception ex)
-            {
-                ProbeControlRoomUtils.Logger.debug("Exception finding fields: " + ex.ToString());
-            }
-
 
             refreshVesselRooms();
 
@@ -348,20 +341,14 @@ namespace ProbeControlRoom
                 return false;
             }
 
-            // this prevents the portrait gallery from responding to VesselWasModified callbacks
-            KerbalPortraitGallery.Instance.enabled = false;
-
             // spawn the internal model
             if (aPart.internalModel == null)
             {
+                aPart.CreateInternalModel();
                 if (aPart.internalModel == null)
                 {
-                    aPart.CreateInternalModel();
-                    if (aPart.internalModel == null)
-                    {
-                        ProbeControlRoomUtils.Logger.message("startIVA() failed to spawn the internal model. DIE.");
-                        return false;
-                    }
+                    ProbeControlRoomUtils.Logger.message("startIVA() failed to spawn the internal model. DIE.");
+                    return false;
                 }
                 
                 aPart.internalModel.Initialize(aPart);
@@ -445,8 +432,11 @@ namespace ProbeControlRoom
             if (UIPartActionController.Instance != null)
                 UIPartActionController.Instance.Deactivate();
 
+            // this prevents the portrait gallery from responding to VesselWasModified callbacks
+            KerbalPortraitGallery.Instance.gameObject.SetActive(false);
+            KerbalPortraitGallery.Instance.StopAllCoroutines();
+
             //Activate internal camera
-            //CameraManager.Instance.SetCameraInternal(aPart.internalModel, actualTransform);
             StartCoroutine(DelayedIVACameraSwitch());
 
             ProbeControlRoomUtils.Logger.debug("startIVA() - DONE");
@@ -475,13 +465,6 @@ namespace ProbeControlRoom
 
             return true;
 
-        }
-
-        static FieldInfo x_Kerbal_running_FieldInfo;
-
-        static ProbeControlRoom()
-        {
-            x_Kerbal_running_FieldInfo = typeof(Kerbal).GetField("running", BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
         IEnumerator DelayedIVACameraSwitch()
@@ -527,8 +510,8 @@ namespace ProbeControlRoom
             }
 
             // re-enable the portrait gallery
-            KerbalPortraitGallery.Instance.enabled = true;
-            KerbalPortraitGallery.Instance.StartRefresh(aPart?.vessel);
+            KerbalPortraitGallery.Instance.gameObject.SetActive(true);
+            KerbalPortraitGallery.Instance.StartReset(aPart?.vessel);
 
             //Restore settings to levels prior to entering IVA
             if (ProbeControlRoomSettings.Instance.DisableSounds)
@@ -642,11 +625,9 @@ namespace ProbeControlRoom
                 // if pressing the camera mode (C) button and we either failed to enter IVA mode or just left it, then try to start PCR mode
                 if (!GameSettings.MODIFIER_KEY.GetKey() && GameSettings.CAMERA_MODE.GetKeyDown() && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight)
                 {
-                    // If we were previously in IVA mode and pressing C switched to Flight, the portrait gallery will have spun up a coroutine to refresh itself
-                    // which interferes with which internal spaces are shown or hidden.  Stop it from doing that.
-                    if (startIVA())
+                    //if (FlightGlobals.ActiveVessel?.GetCrewCount() == 0)
                     {
-                        KerbalPortraitGallery.Instance.StopAllCoroutines();
+                        startIVA();
                     }
                 }
             }
