@@ -609,12 +609,13 @@ namespace ProbeControlRoom
                     }
                 }
                 // Cycle to the next kerbal
-                else if (canChangeCameras && GameSettings.CAMERA_NEXT.GetKeyDown(false))
+                else if (canChangeCameras && !GameSettings.MODIFIER_KEY.GetKey() && GameSettings.CAMERA_NEXT.GetKeyDown(false))
                 {
                     // the normal IVA kerbal cycling code uses the crew on the vessel, but the kerbals in the PCR are not in the vessel!
                     int currentIndex = aPart.internalModel.seats.FindIndex(seat => seat.kerbalRef == CameraManager.Instance.IVACameraActiveKerbal);
                     int nextIndex = (currentIndex + 1) % aPart.internalModel.seats.Count;
                     CameraManager.Instance.SetCameraIVA(aPart.internalModel.seats[nextIndex].kerbalRef, true);
+                    GameEvents.OnIVACameraKerbalChange.Fire(aPart.internalModel.seats[nextIndex].kerbalRef); // the stock code doesn't fire this, so we need to
 
                     // stock bug: SetCameraIVA turns off the head renderers and then calls InternalModel.SetVisible, which enables all renderers in the IVA and turns the heads back on
                     CameraManager.Instance.IVACameraActiveKerbal.IVAEnable(true);
