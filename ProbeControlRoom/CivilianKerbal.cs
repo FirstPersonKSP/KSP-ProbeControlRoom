@@ -62,9 +62,10 @@ namespace ProbeControlRoom
                 }
                 catch (Exception) { }
                 kerbal.enabled = true;
-                kerbal.eyeTransform = new GameObject().transform;
-                kerbal.eyeTransform.SetParent(kerbalObj.transform);
-                kerbal.eyeTransform.localPosition = new Vector3(0, 0.602098f, 0.1537878f);
+                kerbal.eyeTransform = new GameObject("eye transform").transform;
+                kerbal.eyeTransform.SetParent(kerbalObj.transform, false);
+                kerbal.eyeInitialPos = new Vector3(0, 0.602098f, 0.1537878f);
+                kerbal.eyeTransform.localPosition = kerbal.eyeInitialPos;
                 kerbal.headTransform = kerbalObj.transform.Find(headTransformPath);
                 kerbal.textureTargets = new Renderer[0];
                 kerbal.InPart = part;
