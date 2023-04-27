@@ -383,9 +383,6 @@ namespace ProbeControlRoom
                     ProbeControlRoomUtils.Logger.message("startIVA() - DisableSounds");
                     GameSettings.SHIP_VOLUME = 0f;
                     GameSettings.AMBIENCE_VOLUME = 0;
-                    GameSettings.MUSIC_VOLUME = 0;
-                    GameSettings.UI_VOLUME = 0;
-                    GameSettings.VOICE_VOLUME = 0;
                 }
 
                 //disable camera wobble
