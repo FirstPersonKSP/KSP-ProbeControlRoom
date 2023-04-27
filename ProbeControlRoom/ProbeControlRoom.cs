@@ -321,7 +321,6 @@ namespace ProbeControlRoom
                 ProbeControlRoomUtils.Logger.debug("startIVA() - return ACTIVE VESSEL NULL");
                 return false;
             }
-            ProbeControlRoomUtils.Logger.debug("startIVA()");
 
             if (FlightGlobals.ActiveVessel.packed)
             {
@@ -340,6 +339,8 @@ namespace ProbeControlRoom
                 ProbeControlRoomUtils.Logger.message("startIVA() Can't find a part. DIE.");
                 return false;
             }
+
+            ProbeControlRoomUtils.Logger.debug("startIVA()");
 
             // spawn the internal model
             if (aPart.internalModel == null)
@@ -502,7 +503,10 @@ namespace ProbeControlRoom
 
             // this re-attaches the camera to the internal space, so that it doesn't get deactivated below
             // It's really important that the camera doesn't get deactivated, because then it can't be found again by the stock code
-            InternalCamera.Instance.DisableCamera();
+            if (InternalCamera.Instance.transform.IsChildOf(aPart.internalModel.transform))
+            {
+                InternalCamera.Instance.DisableCamera();
+            }
 
             if (aPart != null && aPart.internalModel != null)
             {
@@ -555,7 +559,7 @@ namespace ProbeControlRoom
             InputLockManager.RemoveControlLock("ProbeControlRoom");
 
             //Switch back to normal cameras
-            if (CameraManager.Instance != null && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA)
+            if (CameraManager.Instance != null && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.IVA && !ThroughTheEyes.IsFirstPerson)
             {
                 CameraManager.Instance.SetCameraFlight();
             }
@@ -604,6 +608,11 @@ namespace ProbeControlRoom
                     }
                     else
                     {
+                        // if we just pressed C and ThroughTheEyes entered first person, then we should go back to normal flight camera mode to preserve the cycle of flight -> iva -> pcr -> flight
+                        if (ThroughTheEyes.IsFirstPerson)
+                        {
+                            ThroughTheEyes.ExitFirstPerson();
+                        }
 
                         stopIVA();
                     }
@@ -624,7 +633,7 @@ namespace ProbeControlRoom
             else
             {
                 // if pressing the camera mode (C) button and we either failed to enter IVA mode or just left it, then try to start PCR mode
-                if (!GameSettings.MODIFIER_KEY.GetKey() && GameSettings.CAMERA_MODE.GetKeyDown() && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight)
+                if (!GameSettings.MODIFIER_KEY.GetKey() && GameSettings.CAMERA_MODE.GetKeyDown() && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight && !ThroughTheEyes.IsFirstPerson)
                 {
                     //if (FlightGlobals.ActiveVessel?.GetCrewCount() == 0)
                     {
