@@ -10,14 +10,9 @@ Features
 	
 Requires
 ----------
-	- [ModuleManager](http://forum.kerbalspaceprogram.com/threads/55219) >= v2.7.3
-	- (optional) [Toolbar](http://forum.kerbalspaceprogram.com/threads/60863) >= v1.7.13
-
-For RasterPropMonitor
-----------
-	- [RasterPropMonitor](http://forum.kerbalspaceprogram.com/threads/117471) >= v0.28
-	- (optional) [SCANsat](http://forum.kerbalspaceprogram.com/threads/80369) >= v1.1.6.11
-
+	- ModuleManager
+	- ToolbarController
+ 	- RasterPropMonitor
 
 How to use
 ----------
@@ -28,7 +23,7 @@ How to use
 	 a. MannedVessel: Bottom right, above the KerbalAvatars is a IVA button
 	 b. UnmannedVessel: Use the CameraMode button (C) to access/leave IVA
 	 c. Righclick the ProbeCore and click "IVA from here"
-	 d. click the IVA button in the toolbar (if installed)
+	 d. click the IVA button in the toolbar
 
 	 
 Extended
@@ -58,7 +53,7 @@ Thanks
 	
 Authors
 -------
-	Contributions by: Virindi, Tabakhase, Icedown, Albert_VDS, MeCripp, Nils277, JPLRepo, Dexter9313, Z-Key Aerospace, JlCarneiro
+	Contributions by: Virindi, Tabakhase, Icedown, Albert_VDS, MeCripp, Nils277, JPLRepo, Dexter9313, Z-Key Aerospace, JlCarneiro, LinuxGuruGamer, JonnyOThan
 	
 	
 License
