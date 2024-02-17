@@ -589,7 +589,7 @@ namespace ProbeControlRoom
         {
             if (isActive)
             {
-                bool canChangeCameras = !MapView.MapIsEnabled && !kerbalWasUnbuckled;
+                bool canChangeCameras = !MapView.MapIsEnabled && !kerbalWasUnbuckled && InputLockManager.GetControlLock("kOSTerminal") == ControlTypes.None;
 
                 if (CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight)
                 {
@@ -630,12 +630,9 @@ namespace ProbeControlRoom
             else
             {
                 // if pressing the camera mode (C) button and we either failed to enter IVA mode or just left it, then try to start PCR mode
-                if (!GameSettings.MODIFIER_KEY.GetKey() && GameSettings.CAMERA_MODE.GetKeyDown() && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight && !ThroughTheEyes.IsFirstPerson)
+                if (!InputLockManager.IsLocked(ControlTypes.CAMERAMODES) && !GameSettings.MODIFIER_KEY.GetKey() && GameSettings.CAMERA_MODE.GetKeyDown() && CameraManager.Instance.currentCameraMode == CameraManager.CameraMode.Flight && !ThroughTheEyes.IsFirstPerson)
                 {
-                    //if (FlightGlobals.ActiveVessel?.GetCrewCount() == 0)
-                    {
-                        startIVA();
-                    }
+                    startIVA();
                 }
             }
 
