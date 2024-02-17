@@ -3,15 +3,14 @@
   "URL": "https://raw.githubusercontent.com/JonnyOThan/KSP-ProbeControlRoom/master/GameData/ProbeControlRoom/ProbeControlRoom.version",
   "DOWNLOAD": "https://github.com/JonnyOThan/KSP-ProbeControlRoom/releases",
   "GITHUB": {
-    "USERNAME": "Linuxgurugamer",
+    "USERNAME": "JonnyOThan",
     "REPOSITORY": "KSP-ProbeControlRoom",
     "ALLOW_PRE_RELEASE": false
   },
   "VERSION": {
     "MAJOR": 1,
-    "MINOR": 3,
-    "PATCH": 3,
-    "BUILD": 0
+    "MINOR": 4,
+    "PATCH": 0
   },
   "KSP_VERSION": {
     "MAJOR": 1,
